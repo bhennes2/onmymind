@@ -1,0 +1,38 @@
+<h1><%= @title %></h1>
+<div id="results">
+	<table>
+		<tr>
+			<th>ID</th>
+			<th>Idea</th>
+			<th>Timeframe</th>
+			<th>Timeframe Date</th>
+			<th>User ID</th>
+			<th>Tag</th>
+		</tr>
+
+	<% @thoughts.each do |thought| %>
+		<tr>
+		  	<td><%= thought.id %></td>
+			<td><%= thought.idea %></td>
+			<td><%= thought.timeframe %></td>
+			<td><%= thought.timeframe_date %></td>
+			<td><%= thought.user_id %></td>
+			<td><%= thought.tag %></td>
+			<td><%= link_to 'Show', thought %></td>
+			<td><%= link_to 'Edit', edit_thought_path(thought) %></td>
+    			<td><%= link_to 'Destroy', thought, :confirm => 'Are you sure?', :method => :delete %></td>
+		</tr>
+	<% end %>
+	</table>
+</div>
+
+<br />
+
+<%= link_to 'New Thought', new_thought_path %><br />
+<%= link_to 'Back', root_url %>
+
+<p> View by: </p>
+
+<a id="timeframe" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Timeframe</a>
+<a id="tag" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Tag</a>
+<%= link_to "Location..." %>

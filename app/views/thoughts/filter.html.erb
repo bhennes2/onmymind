@@ -1,0 +1,124 @@
+<h1><%= @title %></h1>
+
+<% if params[:type] == "timeframe" %>
+	<a id="title_soon">Soon (<%= @thoughts_soon.count %>)</a> | <a id="title_someday">Someday (<%= @thoughts_someday.count %>)</a> | <a id="title_by_date">By Date (<%= @thoughts_by_date.count %>)</a> | <a id="title_every">Every (<%= @thoughts_every.count %>)</a>
+	<div id="results_timeframe">
+		<ul id="list_soon" >
+			<% @thoughts_soon.each do |thought| %>
+				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+			<% end %>
+		</ul>
+		<ul id="list_someday" style=" display: none; " >
+			<% @thoughts_someday.each do |thought| %>
+				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+			<% end %>
+		</ul>
+		<ul id="list_by_date" style=" display: none; " >
+			<% @thoughts_by_date.each do |thought| %>
+				<li><%= thought.id %> | <%= thought.timeframe_date %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+			<% end %>
+		</ul>
+		<ul id="list_every" style=" display: none; " >
+			<% @thoughts_every.each do |thought| %>
+				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+			<% end %>
+		</ul>
+	</div>
+
+<% end %>
+
+<% if params[:type] == "tag" %>
+	<% if !@thoughts.nil? %>
+		<% flag = "" %>
+		<% counter = 0 %>
+		<% @thoughts.each_cons(2) do |thought, next_thought| %>
+			<% if flag != thought.tag %>
+				<span><%= thought.tag %></span>
+				<ul>
+			<% end %>
+					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
+			<% if next_thought.tag != thought.tag %>
+				</ul>
+			<% end %>
+			<% flag = thought.tag %>
+			<% counter += 1 %>
+			<% if counter == (@thoughts.size - 1) %>
+				<% if next_thought.tag == thought.tag %>
+					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
+				</ul>
+				<% else %>
+				<span><%= next_thought.tag %></span>
+				<ul>
+					<li><%= next_thought.id %> | <%= next_thought.idea %> | <%= next_thought.timeframe %></li>
+				</ul>
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+<% end %>
+
+<% if params[:type] == "location" %>
+	<script>var myOptions = {
+          center: new google.maps.LatLng(41.93611689999999,-87.6629294),
+          zoom: 14,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+	function showMap(position) {
+	// Show a map centered at (position.coords.latitude, position.coords.longitude).
+		var lat = position.coords.latitude;
+		var long = position.coords.longitude;
+		var coords = [lat, long];
+		return coords;
+	}
+
+	// One-shot position request.
+	navigator.geolocation.getCurrentPosition(showMap);
+
+	var marker_here = new google.maps.Marker({
+      			position: new google.maps.LatLng(41.93611689999999,-87.6629294),
+			map: map,
+			title:"You are here!"
+	});
+	<% counter = 0 %>
+	var marker = [];
+	var infowindow = [];
+	<% @thoughts.each do |thought| %>
+		marker = new google.maps.Marker({
+      			position: new google.maps.LatLng(<%= thought.note_content %>),
+			map: map,
+			title: "<%= thought.idea %>",
+			zIndex: <%= counter %>
+		});
+		infowindow[marker.zIndex] = new google.maps.InfoWindow({
+    			content: "Hello"
+		});
+		<% counter += 1 %>
+	<% end %>
+		/*google.maps.event.addListener(marker, 'mouseover', function() {
+			document.write(this.zIndex);
+			//infowindow[this.zIndex].open(map,this);
+		});
+		google.maps.event.addListener(marker, 'click', function() {
+			document.write(this.zIndex);
+			//infowindow[this.zIndex].close();
+		});*/
+	</script>
+	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
+<% end %>
+
+<script>
+	$("#title_soon").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_soon").show()});
+	$("#title_someday").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_someday").show()});
+	$("#title_by_date").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_by_date").show()});
+	$("#title_every").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_every").show()});
+</script>

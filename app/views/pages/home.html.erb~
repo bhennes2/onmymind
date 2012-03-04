@@ -1,0 +1,9 @@
+<h1>OnMyMind.....omm</h1>
+<p>Help me to remember please...</p>
+
+<%= link_to "What's on  my mind", thoughts_path %><br />
+<%= link_to "A new thought...", new_thought_path %>
+<p> View by: </p>
+<%= link_to "Timeframe..." %>
+<%= link_to "Tag..." %>
+<%= link_to "Location..." %>
