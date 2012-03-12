@@ -1,0 +1,4 @@
+class AddCompleteToThoughts < ActiveRecord::Migration
+  def change
+  end
+end

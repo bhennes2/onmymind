@@ -1,16 +1,16 @@
 class ThoughtsController < ApplicationController
 
+	before_filter :signed_in_user
+	before_filter :correct_user, :only => [:show, :edit]
+
 	# GET /thoughts
   	# GET /thoughts.xml
 	def index
-
 		@title = "Viewing my thoughts"
-		@thoughts = Thought.all
-
-		respond_to do |format|
-      			format.html # index.html.erb
-			format.xml  { render :xml => @thoughts }
-		end
+		#respond_to do |format|
+      			#format.html # index.html.erb
+			#format.xml  { render :xml => @thoughts }
+		#end
 	end
 
 	def filter
@@ -28,20 +28,42 @@ class ThoughtsController < ApplicationController
 		end
 		if params[:type] == "location"
 			@title = "Thoughts by location"
-			@thoughts = Thought.where(:note_type => "Location")
+			@thoughts = Thought.where(:note_location => "1")
 		end
 
 	end
 
-  # GET /thoughts/1
-  # GET /thoughts/1.xml
-  def show
-    @thought = Thought.find(params[:id])
+	def completed
+		@thought = Thought.find(params[:id])
+		@thought.complete = params[:value]
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @thought }
-    end
+		flash[:success] = "Thought "<< @thought.idea << "completed"
+
+		respond_to do |format|
+			if @thought.update_attributes(params[:thought])
+				format.html { redirect_to(@thought, :notice => 'Thought was successfully updated.') }
+				format.xml  { head :ok }
+			else
+				format.html { render :action => "edit" }
+				format.xml  { render :xml => @thought.errors, :status => :unprocessable_entity }
+			end
+		end
+	end
+
+
+
+  	# GET /thoughts/1
+  	# GET /thoughts/1.xml
+  	def show
+
+		@title = "Viewing a thought"
+		@thought = Thought.find(params[:id])
+
+		respond_to do |format|
+			format.html # show.html.erb
+			format.xml  { render :xml => @thought }
+		end
+
   end
 
   	# GET /thoughts/new
@@ -49,6 +71,7 @@ class ThoughtsController < ApplicationController
 	def new
   		@title = "Speaking of that..."
 		@thought = Thought.new
+		@thoughts = Thought.all
 
 		respond_to do |format|
 		      format.html # new.html.erb
@@ -58,13 +81,15 @@ class ThoughtsController < ApplicationController
 
   # GET /thoughts/1/edit
   def edit
-    @thought = Thought.find(params[:id])
+	@thought = Thought.find(params[:id])
+	@thoughts = Thought.all
   end
 
   # POST /thoughts
   # POST /thoughts.xml
   def create
-    @thought = Thought.new(params[:thought])
+	@thought = Thought.new(params[:thought])
+
 
     respond_to do |format|
       if @thought.save
@@ -104,6 +129,18 @@ class ThoughtsController < ApplicationController
       format.html { redirect_to(thoughts_url) }
       format.xml  { head :ok }
     end
+
+
+
   end
+	private
+		def signed_in_user
+      			redirect_to signin_path, notice: "Please sign in." unless signed_in?
+    		end
+		def correct_user
+			user_id = Thought.find(params[:id]).user_id
+			@user = User.find(user_id)
+			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless current_user?(@user)
+		end
 
 end

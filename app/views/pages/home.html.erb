@@ -1,5 +1,43 @@
-<h1>OnMyMind.....omm</h1>
 <p>Help me to remember please...</p>
 
-<%= link_to "What's on  my mind", thoughts_path %><br />
-<%= link_to "A new thought...", new_thought_path %>
+<% if signed_in? %>
+	<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
+		<p><%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off" %>
+                   <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %><br />
+			<%= radio_button_tag 'type', "Idea" %>Idea
+			<%= radio_button_tag 'type', "Tag" %>Tag
+			<%= radio_button_tag 'type', "Date" %>Date
+		</p>
+	<% end %>
+	<div id="search-results" style="display: none; "><%= render :partial => 'search' %></div>
+	<%= link_to "Sign out", signout_path, method: :delete %><br />
+<% else %>
+	<%= link_to 'Sign Up', signup_path %> | <%= link_to 'Sign in', signin_path %>
+<% end %>
+
+<script>
+	$('input:radio').change(function(){
+		$('#search').attr('disabled', false);
+		$('#submit').attr('disabled', false);
+		if ($('input:radio:checked').val() == "Date"){
+			$('#search').datepicker({
+				dateFormat: 'yy-dd-mm',
+				showAnim: 'fold',
+				defaultDate: new Date()
+			});
+		}
+		else{
+			$('#search').datepicker("destroy");
+		}
+	});
+	$('#search').keyup(function(){
+		$('#search-results').show();
+		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		return false;
+	});
+	$('#search').change(function(){
+		$('#search-results').show();
+		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		return false;
+	});
+</script>

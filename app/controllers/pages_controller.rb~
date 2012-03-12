@@ -1,2 +1,8 @@
 class PagesController < ApplicationController
+
+	def home
+		@title = "Home"
+		@thoughts = Thought.search(params[:search],params[:type])
+	end
+
 end

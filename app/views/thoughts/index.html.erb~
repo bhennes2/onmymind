@@ -1,38 +1,27 @@
 <h1><%= @title %></h1>
-<div id="results">
-	<table>
-		<tr>
-			<th>ID</th>
-			<th>Idea</th>
-			<th>Timeframe</th>
-			<th>Timeframe Date</th>
-			<th>User ID</th>
-			<th>Tag</th>
-		</tr>
+<p><strong>Filter by: </strong><a class="completion">All</a> (<%= Thought.all.count %>) | <a class="completion">Completed</a> (<%= Thought.all.count-Thought.where(:complete => [nil, false]).count%>) | <a class="completion">Incomplete</a>  (<%= Thought.where(:complete => [nil, false]).count %>)</p>
 
-	<% @thoughts.each do |thought| %>
-		<tr>
-		  	<td><%= thought.id %></td>
-			<td><%= thought.idea %></td>
-			<td><%= thought.timeframe %></td>
-			<td><%= thought.timeframe_date %></td>
-			<td><%= thought.user_id %></td>
-			<td><%= thought.tag %></td>
-			<td><%= link_to 'Show', thought %></td>
-			<td><%= link_to 'Edit', edit_thought_path(thought) %></td>
-    			<td><%= link_to 'Destroy', thought, :confirm => 'Are you sure?', :method => :delete %></td>
-		</tr>
-	<% end %>
-	</table>
+<div id="results">
+
+	<%= render :partial => 'results' %>
 </div>
 
-<br />
+<p> View by:
 
-<%= link_to 'New Thought', new_thought_path %><br />
-<%= link_to 'Back', root_url %>
+<a style="color: blue; text-decoration: underline;" id="timeframe" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Timeframe</a> |
+<a style="color: blue; text-decoration: underline;" id="tag" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Tag</a> |
+<a style="color: blue; text-decoration: underline;" id="location" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Location</a>
 
-<p> View by: </p>
+</p>
 
-<a id="timeframe" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Timeframe</a>
-<a id="tag" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Tag</a>
-<%= link_to "Location..." %>
+<script>
+	$('.checkbox').change(function(){
+		alert("Mark this complete?");
+		$.post("/completed", { id: $(this).attr('id'), value: true }, alert("Completed!"), 'script');
+		return false;
+	});
+	$('a.completion').click(function(){
+		$.get('<%= escape_javascript(render :partial => "results") %>', { type: $(this).text() }, null, 'script');
+		return false;
+	});
+</script>

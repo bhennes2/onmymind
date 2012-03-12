@@ -1,0 +1,210 @@
+<h1>This just popped into my head...</h1>
+
+<%= form_for(@thought) do |f| %>
+  	<% if @thought.errors.any? %>
+  	  <div id="error_explanation">
+  	    <h2><%= pluralize(@thought.errors.count, "error") %> prohibited this thought from being saved:</h2>
+
+  	    <ul>
+  	    <% @thought.errors.full_messages.each do |msg| %>
+  	      <li><%= msg %></li>
+  	    <% end %>
+  	    </ul>
+  	  </div>
+  	<% end %>
+
+	<div class="field">
+		<span>Remember to: </span>
+		<%= f.text_field :idea, :autocomplete => false %><div id="counter"></div>
+	</div>
+	<div class="field">
+		<span>I'll do this: </span>
+		<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %><br />
+		<% if @thought.timeframe == "By Date" %>
+			<div id="select_date">
+				<input id="thought_timeframe_date" type="date" value="<%= @thought.timeframe_date %>"/>
+			</div>
+		<% end %>
+	</div>
+	<div class="field">
+		<span>Tag this to: </span>
+		<%= f.text_field :tag, :autocomplete => false %><br />
+	</div>
+	<div class="field">
+		<span>A litte note: </span>
+		<%= f.check_box :note_image, :class => "checkbox" %>
+		<%= f.check_box :note_link, :class => "checkbox" %>
+		<%= f.check_box :note_location, :class => "checkbox" %>
+		<%= f.check_box :note_email, :class => "checkbox" %>
+		<%= f.check_box :note_text, :class => "checkbox" %>
+	</div>
+	<div id="note_content">
+		<%= f.text_field :image_content, :value => "Image src goes here!", :style => "display: none;" %>
+		<%= f.text_field :link_content, :style => "display: none;" %>
+		<%= f.text_field :location_content, :style => "display: none;" %>
+		<%= f.text_field :email_content, :style => "display: none;" %>
+		<%= f.text_field :text_content, :style => "display: none;" %>
+	</div>
+	<div class="field">
+		<%= f.hidden_field :user_id, :value => 1 %>
+	</div>
+
+
+  <div class="actions">
+    <%= f.submit :value => "Remember!" %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', thoughts_path %><br />
+<%= link_to 'Home', root_url %>
+
+<style>
+	.checkbox {
+		width: 40px;
+		height: 38px;
+		-webkit-appearance: none;
+		margin: 0 8px 0 8px;
+	}
+
+	#thought_note_image { background: url('/assets/picture-off.png'); }
+	#thought_note_image:checked { background: url('/assets/picture-on.png'); }
+	#thought_note_location { background: url('/assets/location-off.png'); }
+	#thought_note_location:checked { background: url('/assets/location-on.png'); }
+	#thought_note_link { background: url('/assets/link-off.png'); }
+	#thought_note_link:checked { background: url('/assets/link-on.png'); }
+	#thought_note_email { background: url('/assets/email-off.png'); }
+	#thought_note_email:checked { background: url('/assets/email-on.png'); }
+	#thought_note_text { background: url('/assets/text-off.png'); }
+	#thought_note_text:checked { background: url('/assets/text-on.png'); }
+</style>
+
+
+<script>
+	$(function(){
+		var max_length = 30;
+		// get current number of characters
+		$('#counter').html(max_length - $('#thought_idea').val().length);
+
+		$('#thought_idea').keyup(function()
+		{
+			// get new length of characters
+			if ($(this).val().length >= max_length)
+			{
+				$('#counter').html('You have reached the maximum limit of ' + max_length);
+				$(this).val($(this).val().substr(0, max_length));
+			}
+			else
+			{
+				$('#counter').html(max_length - $(this).val().length);
+			}
+		});
+
+		//Autocomplete idea and tag
+		var available_ideas = [<% @thoughts.each do |thought| %>
+						"<%= thought.idea %>"
+						<% if thought != @thoughts.last %>,<% end %>
+					<% end %>];
+		var available_tags = [<% @thoughts.each do |thought| %>
+						"<%= thought.tag %>"
+						<% if thought != @thoughts.last %>,<% end %>
+					<% end %>];
+		$("#thought_idea").autocomplete({ source: available_ideas.unique() });
+		$("#thought_tag").autocomplete({ source: available_tags.unique() });
+
+	});
+
+	$("#thought_note_image").change(function(){
+		if ($("#thought_note_image:checked")){
+			$("#thought_image_content").show();
+		}
+	});
+
+	$("#thought_note_link").change(function(){
+		if ($("#thought_note_link:checked")){
+			$("#thought_link_content").show().val(window.location).attr('rows', 1);
+		}
+	});
+
+	$("#thought_note_location").change(function(){
+		if ($("#thought_note_location:checked")){
+			$("#thought_location_content").show();
+			function showMap(position) {
+    	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
+				$("#thought_location_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
+			}
+
+			// One-shot position request.
+    			navigator.geolocation.getCurrentPosition(showMap);
+		}
+	});
+
+	$("#location_checkbox").change(function(){
+		if ($("#location_checkbox:checked")){
+			$("#note_content").slideDown();
+			function showMap(position) {
+    	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
+				$("#thought_note_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
+			}
+
+			// One-shot position request.
+    			navigator.geolocation.getCurrentPosition(showMap);
+		 }
+		else { $("#thought_note_content").val(""); }
+	});
+
+	$("#thought_timeframe").change(function(){
+		if ($("#thought_timeframe option:selected").val() == "By Date")
+		{	$("#select_date").show();
+			$("#thought_timeframe_date").datepicker({dateFormat: 'yy-dd-mm'}).focus();
+		}
+		else{
+			$("#select_date").hide();
+		}
+	});
+
+	$("#thought_note_type").change(function(){
+		if ($("#thought_note_type option:selected").val() == "Location")
+		{	$("#note_content").slideDown();
+
+			function showMap(position) {
+    	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
+				$("#thought_note_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
+			}
+
+			// One-shot position request.
+    		navigator.geolocation.getCurrentPosition(showMap);
+		}
+		else if ($("#thought_note_type option:selected").val() == "Link")
+		{
+			$("#note_content").slideDown();
+			$("#thought_note_content").val(window.location).attr('rows', 1);
+		}
+		else if ($("#thought_note_type option:selected").val() == "Text")
+		{
+			$("#note_content").slideDown();
+
+			$("#thought_note_content").attr('rows', 5).val("");
+		}
+
+		else{
+			$("#note_content").hide();
+		}
+	});
+
+	//Return new array with duplicate values removed
+	Array.prototype.unique =
+	  function() {
+	    var a = [];
+	    var l = this.length;
+	    for(var i=0; i<l; i++) {
+	      for(var j=i+1; j<l; j++) {
+		// If this[i] is found later in the array
+		if (this[i] === this[j])
+		  j = ++i;
+	      }
+	      a.push(this[i]);
+	    }
+	    return a;
+	  };
+
+</script>

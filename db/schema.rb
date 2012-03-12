@@ -11,18 +11,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120302173305) do
+ActiveRecord::Schema.define(:version => 20120308221808) do
 
   create_table "thoughts", :force => true do |t|
     t.string   "idea"
     t.string   "timeframe"
-    t.date     "timeframe_date"
+    t.string   "timeframe_date"
     t.string   "tag"
-    t.string   "note_type"
-    t.text     "note_content"
+    t.string   "note_image"
+    t.text     "image_content"
     t.integer  "user_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.string   "note_location"
+    t.string   "note_link"
+    t.string   "note_email"
+    t.string   "note_text"
+    t.text     "location_content"
+    t.text     "link_content"
+    t.text     "email_content"
+    t.text     "text_content"
+    t.boolean  "complete"
   end
 
   add_index "thoughts", ["created_at"], :name => "index_thoughts_on_created_at"
@@ -32,5 +41,17 @@ ActiveRecord::Schema.define(:version => 20120302173305) do
   add_index "thoughts", ["timeframe"], :name => "index_thoughts_on_timeframe"
   add_index "thoughts", ["timeframe_date"], :name => "index_thoughts_on_timeframe_date"
   add_index "thoughts", ["user_id"], :name => "index_thoughts_on_user_id"
+
+  create_table "users", :force => true do |t|
+    t.string   "username"
+    t.string   "email"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "password_digest"
+    t.string   "remember_token"
+  end
+
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
 
 end

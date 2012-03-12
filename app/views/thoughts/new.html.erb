@@ -20,9 +20,7 @@
 	<div class="field">
 		<span>I'll do this: </span>
 		<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %><br />
-		<div id="select_date" style=" display: none; ">
-			<%= f.text_field :timeframe_date %><br />
-		</div>
+		<%= f.text_field :timeframe_date, :style => "display: none;" %><br />
 	</div>
 	<div class="field">
 		<span>Tag this to: </span>
@@ -30,13 +28,27 @@
 	</div>
 	<div class="field">
 		<span>A litte note: </span>
-		<%= f.select :note_type, ["", "Picture", "Link", "Location", "Email", "Text" ] %><br />
-		<div id="note_content" style=" display: none; ">
-			<%= f.text_area :note_content, :rows => 1 %><br />
+		<%= f.check_box :note_image, :class => "checkbox" %>
+		<%= f.check_box :note_link, :class => "checkbox" %>
+		<%= f.check_box :note_location, :class => "checkbox" %>
+		<%= f.check_box :note_email, :class => "checkbox" %>
+		<%= f.check_box :note_text, :class => "checkbox" %>
+	</div>
+	<div id="note_content">
+		<% if !(request.user_agent.include? "iphone" || "ipad") %>
+			<%= f.text_field :image_content, :class => "note_content_field", :style => "display: none;" %>
+		<% end %>
+		<%= f.text_field :link_content, :class => "note_content_field", :style => "display: none;" %>
+		<div id="location_information" style="display: none;" class="note_content_field">
+			<%= f.text_field :location_content, :class => "note_content_field" %>
+			<img id="locate_current" src="/assets/home.png" alt="Find current location" title="Find current location" />
 		</div>
+		<%= f.text_area :email_content, :class => "note_content_field", :style => "display: none;" %>
+		<%= f.text_area :text_content, :class => "note_content_field", :style => "display: none;" %>
 	</div>
 	<div class="field">
-		<%= f.hidden_field :user_id, :value => 1 %>
+		<%= f.hidden_field :user_id, :value => current_user.id %>
+		<%= f.hidden_field :complete, :value => false %>
 	</div>
 
 
@@ -47,6 +59,27 @@
 
 <%= link_to 'Back', thoughts_path %><br />
 <%= link_to 'Home', root_url %>
+
+<style>
+	.checkbox {
+		width: 40px;
+		height: 38px;
+		-webkit-appearance: none;
+		margin: 0 8px 0 8px;
+	}
+
+	#thought_note_image { background: url('/assets/picture-off.png'); }
+	#thought_note_image:checked { background: url('/assets/picture-on.png'); }
+	#thought_note_location { background: url('/assets/location-off.png'); }
+	#thought_note_location:checked { background: url('/assets/location-on.png'); }
+	#thought_note_link { background: url('/assets/link-off.png'); }
+	#thought_note_link:checked { background: url('/assets/link-on.png'); }
+	#thought_note_email { background: url('/assets/email-off.png'); }
+	#thought_note_email:checked { background: url('/assets/email-on.png'); }
+	#thought_note_text { background: url('/assets/text-off.png'); }
+	#thought_note_text:checked { background: url('/assets/text-on.png'); }
+</style>
+
 
 <script>
 	$(function(){
@@ -69,20 +102,75 @@
 		});
 
 		//Autocomplete idea and tag
-		var available_ideas = ["Laguinitas Maximus IPA"];
-		var available_tags = ["Beer"];
-		$("#thought_idea").autocomplete({ source: available_ideas });
-		$("#thought_tag").autocomplete({ source: available_tags });
+		var available_ideas = [<% @thoughts.each do |thought| %>
+						"<%= thought.idea %>"
+						<% if thought != @thoughts.last %>,<% end %>
+					<% end %>];
+		var available_tags = [<% @thoughts.each do |thought| %>
+						"<%= thought.tag %>"
+						<% if thought != @thoughts.last %>,<% end %>
+					<% end %>];
+		$("#thought_idea").autocomplete({ source: available_ideas.unique() });
+		$("#thought_tag").autocomplete({ source: available_tags.unique() });
 
+	});
+
+	$("#thought_note_image").click(function(){
+		if ($("#thought_note_image:checked")){
+			$(".note_content_field").hide();
+			$("#thought_image_content").show().val('/assets/rails.png');
+		}
+		else {
+			document.write("hello");
+		}
+	});
+
+	$("#thought_note_link").change(function(){
+		if ($("#thought_note_link:checked")){
+			$(".note_content_field").hide();
+			$("#thought_link_content").show().val(window.location).attr('rows', 1);
+		}
+	});
+
+	$("#thought_note_location").change(function(){
+		if ($("#thought_note_location:checked")){
+			$(".note_content_field").hide();
+			$("#location_information").show();
+			$("#thought_location_content").show();
+		}
+	});
+
+	$("#locate_current").click(function(){
+			function showMap(position) {
+    	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
+				$("#thought_location_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
+			}
+
+			// One-shot position request.
+    			navigator.geolocation.getCurrentPosition(showMap);
+	});
+
+	$("#thought_note_email").change(function(){
+		if ($("#thought_note_email:checked")){
+			$(".note_content_field").hide();
+			$("#thought_email_content").show().attr('rows', 5);
+		}
+	});
+
+
+	$("#thought_note_text").change(function(){
+		if ($("#thought_note_text:checked")){
+			$(".note_content_field").hide();
+			$("#thought_text_content").show().attr('rows', 5);
+		}
 	});
 
 	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected").val() == "By Date")
-		{	$("#select_date").show();
-			$("#thought_timeframe_date").datepicker().focus();
+		{	$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-dd-mm'}).focus();
 		}
 		else{
-			$("#select_date").hide();
+			$("#thought_timeframe_date").hide();
 		}
 	});
 
@@ -114,5 +202,21 @@
 			$("#note_content").hide();
 		}
 	});
+
+	//Return new array with duplicate values removed
+	Array.prototype.unique =
+	  function() {
+	    var a = [];
+	    var l = this.length;
+	    for(var i=0; i<l; i++) {
+	      for(var j=i+1; j<l; j++) {
+		// If this[i] is found later in the array
+		if (this[i] === this[j])
+		  j = ++i;
+	      }
+	      a.push(this[i]);
+	    }
+	    return a;
+	  };
 
 </script>

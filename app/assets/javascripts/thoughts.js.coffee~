@@ -2,26 +2,18 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-var max_length = 30;
-		// get current number of characters
-		$('#counter').html(max_length - $('#thought_idea').val().length);
-
-		$('#thought_idea').keyup(function()
-		{
-			// get new length of characters
-			if ($(this).val().length >= max_length)
-			{
-				$('#counter').html('You have reached the maximum limit of ' + max_length);
-				$(this).val($(this).val().substr(0, max_length));
-			}
-			else
-			{
-				$('#counter').html(max_length - $(this).val().length);
-			}
-		});
-
-		//Autocomplete idea and tag
-		var available_ideas = ["Laguinitas Maximus IPA"];
-		var available_tags = ["Beer"];
-		$("#thought_idea").autocomplete({ source: available_ideas });
-		$("#thought_tag").autocomplete({ source: available_tags });
+# Return new array with duplicate values removed
+Array.prototype.unique =
+  function() {
+    var a = [];
+    var l = this.length;
+    for(var i=0; i<l; i++) {
+      for(var j=i+1; j<l; j++) {
+        // If this[i] is found later in the array
+        if (this[i] === this[j])
+          j = ++i;
+      }
+      a.push(this[i]);
+    }
+    return a;
+  };

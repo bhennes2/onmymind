@@ -5,25 +5,28 @@
 	<div id="results_timeframe">
 		<ul id="list_soon" >
 			<% @thoughts_soon.each do |thought| %>
-				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
 		<ul id="list_someday" style=" display: none; " >
 			<% @thoughts_someday.each do |thought| %>
-				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
 		<ul id="list_by_date" style=" display: none; " >
 			<% @thoughts_by_date.each do |thought| %>
-				<li><%= thought.id %> | <%= thought.timeframe_date %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+				<li><%= thought.idea %> | <%= thought.timeframe_date %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
 		<ul id="list_every" style=" display: none; " >
 			<% @thoughts_every.each do |thought| %>
-				<li><%= thought.id %> | <%= thought.tag %> | <a href="<%= edit_thought_path(thought) %>">View</a></li>
+				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
 	</div>
+
+<%= link_to 'New Thought', new_thought_path %><br />
+<%= link_to 'Back', thoughts_path %>
 
 <% end %>
 
@@ -33,8 +36,8 @@
 		<% counter = 0 %>
 		<% @thoughts.each_cons(2) do |thought, next_thought| %>
 			<% if flag != thought.tag %>
-				<span><%= thought.tag %></span>
-				<ul>
+				<span id="<%= thought.id %>"><%= thought.tag %></span>
+				<ul id="ul<%= thought.id %>">
 			<% end %>
 					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
 			<% if next_thought.tag != thought.tag %>
@@ -55,60 +58,101 @@
 			<% end %>
 		<% end %>
 	<% end %>
+<%= link_to 'New Thought', new_thought_path %><br />
+<%= link_to 'Back', thoughts_path %>
+
 <% end %>
 
 <% if params[:type] == "location" %>
-	<script>var myOptions = {
-          center: new google.maps.LatLng(41.93611689999999,-87.6629294),
-          zoom: 14,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            myOptions);
+	<p>Display <strong><%= @thoughts.count %></strong> ideas on the map near you!</p>
+	<p>Filter by: <a onclick="filter_map('all');">All</a> |
+	<% if !@thoughts.nil? %>
+		<% flag = "" %>
+		<% counter = 0 %>
+		<% @thoughts.each_cons(2) do |thought, next_thought| %>
+			<% if flag != thought.tag %>
+				<a id="<%= thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= thought.tag %></a> |
+			<% end %>
+			<% flag = thought.tag %>
+			<% counter += 1 %>
+			<% if counter == (@thoughts.size - 1) %>
+				<% if next_thought.tag != thought.tag %>
+					<a id="<%= next_thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= next_thought.tag %></a>
+				<% end %>
+			<% end %>
+
+		<% end %>
+	<% end %></p>
+	<script>
+	var marker = [];
 	function showMap(position) {
-	// Show a map centered at (position.coords.latitude, position.coords.longitude).
-		var lat = position.coords.latitude;
-		var long = position.coords.longitude;
-		var coords = [lat, long];
-		return coords;
+		// Show a map centered at (position.coords.latitude, position.coords.longitude).
+		var myOptions = {
+          		center: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
+          		zoom: 14,
+          		mapTypeId: google.maps.MapTypeId.ROADMAP,
+			zoomControl: true
+        	};
+	        var map = new google.maps.Map(document.getElementById("map_canvas"),
+        	    myOptions);
+		var marker_here = new google.maps.Marker({
+      			position: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
+			map: map,
+			title:"You are here!",
+			icon: "/assets/blue-dot.png",
+			options: { visible: true }
+		});
+
+		var infowindow = [];
+		var counter = 0;
+		<% @thoughts.each do |thought| %>
+			marker[counter] = new google.maps.Marker({
+				position: new google.maps.LatLng(<%= thought.location_content %>),
+				map: map,
+				title: "<%= thought.tag %>",
+				options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
+			});
+			infowindow[counter] = new google.maps.InfoWindow({
+				content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
+				zIndex: counter
+			});
+			google.maps.event.addListener(marker[counter], 'click', function() {
+				infowindow[this.zIndex].open(map,this);
+			});
+			counter++;
+		<% end %>
+
+
+	}
+
+	function error(position) {
+		alert("No location found!");
 	}
 
 	// One-shot position request.
-	navigator.geolocation.getCurrentPosition(showMap);
+	navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
 
-	var marker_here = new google.maps.Marker({
-      			position: new google.maps.LatLng(41.93611689999999,-87.6629294),
-			map: map,
-			title:"You are here!"
-	});
-	<% counter = 0 %>
-	var marker = [];
-	var infowindow = [];
-	<% @thoughts.each do |thought| %>
-		marker = new google.maps.Marker({
-      			position: new google.maps.LatLng(<%= thought.note_content %>),
-			map: map,
-			title: "<%= thought.idea %>",
-			zIndex: <%= counter %>
-		});
-		infowindow[marker.zIndex] = new google.maps.InfoWindow({
-    			content: "Hello"
-		});
-		<% counter += 1 %>
-	<% end %>
-		google.maps.event.addListener(marker, 'mouseover', function() {
-			document.write(this.zIndex);
-			//infowindow[this.zIndex].open(map,this);
-		});
-		google.maps.event.addListener(marker, 'click', function() {
-			document.write(this.zIndex);
-			//infowindow[this.zIndex].close();
-		});
+
+
 	</script>
 	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
+<%= link_to 'New Thought', new_thought_path %><br />
+<%= link_to 'Back', thoughts_path %>
 <% end %>
 
 <script>
+	function filter_map(tag){
+		for (var i=0; i < marker.length; i++){
+			if (marker[i].getTitle() == tag || tag == "all"){
+				marker[i].setVisible(true);
+			}
+			else
+				marker[i].setVisible(false);
+
+
+		}
+	}
+
 	$("#title_soon").click(function(){
 		$("#results_timeframe").children().hide();
 		$("#list_soon").show()});
@@ -121,4 +165,8 @@
 	$("#title_every").click(function(){
 		$("#results_timeframe").children().hide();
 		$("#list_every").show()});
+
+	$("span").click(function(){
+		$("ul"+$(this).attr('id')).toggle();
+	});
 </script>

@@ -1,0 +1,9 @@
+class RenameNoteTypeForThoughts < ActiveRecord::Migration
+  def up
+	rename_column :thoughts, :note_type, :note_image
+  end
+
+  def down
+	rename_column :thoughts, :note_image, :note_type
+  end
+end
