@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
-	before_filter :signed_in_user
-	before_filter :correct_user
+	before_filter :signed_in_user, :only => [:show]
+	before_filter :correct_user, :only => [:show]
 
 	def new
 		@title = "New User Sign up"
