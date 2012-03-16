@@ -73,6 +73,8 @@ class ThoughtsController < ApplicationController
 		@thought = Thought.new
 		@thoughts = Thought.all
 
+		@thoughts_location = Thought.where(:user_id => current_user.id, :note_location => "1")
+
 		respond_to do |format|
 		      format.html # new.html.erb
 		      format.xml  { render :xml => @thought }

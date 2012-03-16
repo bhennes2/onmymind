@@ -9,6 +9,9 @@
 <p><strong>Timeframe : </strong><%= @thought.timeframe %></p>
 <% if @thought.timeframe == "By Date" %>
 	<p><strong>Timeframe Date : </strong><%= @thought.timeframe_date %></p>
+<% elsif @thought.timeframe == "Every" %>
+	<p><strong>Frequency: </strong><%= @thought.timeframe_date.split(',')[0] %></p>
+	<p><strong>Starting on: </strong><%= @thought.timeframe_date.split(',')[1] %></p>
 <% end %>
 <p><strong>Tag : </strong><%= @thought.tag %></p>
 <% if @thought.note_image == "1" %>

@@ -1,4 +1,9 @@
-<p><strong>Completed? : </strong><%= @thought.complete %></p>
+<p><strong>Completed? : </strong>
+	<% if @thought.complete != true %>
+		No
+	<% else %>
+		Yes
+	<% end %></p>
 <p><strong>ID : </strong><%= @thought.id %></p>
 <p><strong>Idea : </strong><%= @thought.idea %></p>
 <p><strong>Timeframe : </strong><%= @thought.timeframe %></p>

@@ -5,11 +5,12 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js' %>
-  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDNTgdz8LHOUFC4eTssPHmMD02N_NnQ5Xk&sensor=false"></script>
+  <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDNTgdz8LHOUFC4eTssPHmMD02N_NnQ5Xk&sensor=false"></script>-->
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<% if !(request.url.include? "fitler") %>
+	<% if !(request.url.include? "filter") %>
 		<%= render 'layouts/header' %>
 	<% end %>
 	<% flash.each do |key, value| %>
@@ -17,7 +18,7 @@
         <% end %>
 	<%= yield %>
 </body>
-	<% if !(request.url.include? "fitler") %>
+	<% if !(request.url.include? "filter") %>
 		<%= render 'layouts/footer' %>
 	<% end %>
 </html>
