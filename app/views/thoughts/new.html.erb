@@ -277,15 +277,28 @@
 	    return a;
 	  };
 
-	$("#locate_place").click(function(){ $('#map_area').show(); });
+	var map;
+	var latitude;
+	var longitude;
+
+	$("#locate_place").click(function(){
+		$('#map_area').show();
+		google.maps.event.trigger(map, "resize");
+		map.setCenter( new google.maps.LatLng(latitude, longitude) );
+		map.setZoom(13);
+	});
 
 	function initialize(position) {
+		latitude = position.coords.latitude;
+		longitude = position.coords.longitude;
 		var mapOptions = {
 		  	center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
 			zoom: 8,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
-		var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+		map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+		google.maps.event.trigger(map, "resize");
 
 		var input = document.getElementById('searchTextField');
 		var autocomplete = new google.maps.places.Autocomplete(input);
@@ -347,6 +360,7 @@
 		setupClickListener('changetype-all', []);
 		setupClickListener('changetype-establishment', ['establishment']);
 		setupClickListener('changetype-geocode', ['geocode']);
+
 	      }
 
 	navigator.geolocation.getCurrentPosition(initialize);

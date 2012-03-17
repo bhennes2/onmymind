@@ -89,6 +89,7 @@
 	<% end %></p>
 	<script>
 	var marker = [];
+	var map;
 	function showMap(position) {
 		// Show a map centered at (position.coords.latitude, position.coords.longitude).
 		var myOptions = {
@@ -97,7 +98,7 @@
           		mapTypeId: google.maps.MapTypeId.ROADMAP,
 			zoomControl: true
         	};
-	        var map = new google.maps.Map(document.getElementById("map_canvas"),
+	        map = new google.maps.Map(document.getElementById("map_canvas"),
         	    myOptions);
 		var marker_here = new google.maps.Marker({
       			position: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
@@ -135,7 +136,7 @@
 
 	// One-shot position request.
 	navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
-
+	google.maps.event.trigger(map, "resize");
 
 
 	</script>
