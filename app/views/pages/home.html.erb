@@ -4,12 +4,17 @@
 	<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
 		<p><%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off" %>
                    <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %><br />
-			<%= radio_button_tag 'type', "Idea" %>Idea
-			<%= radio_button_tag 'type', "Tag" %>Tag
-			<%= radio_button_tag 'type', "Date" %>Date
+			<%= radio_button_tag 'type', "Idea" %><label>Idea</label>
+			<%= radio_button_tag 'type', "Tag" %><label>Tag</label>
+			<%= radio_button_tag 'type', "Date" %><label>Date</label>
 		</p>
 	<% end %>
-	<p id="tags_nearby"> Nearby: </p>
+	<p> Nearby
+		<%= radio_button_tag 'distance', "0.1", :checked => true %><label>Here</label>
+		<%= radio_button_tag 'distance', "1" %><label>1 mi.</label>
+		<%= radio_button_tag 'distance', "5" %><label>5 mi.</label>
+		<%= radio_button_tag 'distance', "10" %><label>10 mi.</label>
+	: <span id="tags_nearby"></span></p>
 	<div id="search-results" style="display: none; "><%= render :partial => 'search' %></div>
 	<%= link_to "Sign out", signout_path, method: :delete %><br />
 
@@ -18,7 +23,12 @@
 <% end %>
 
 <script>
-	$('input:radio').change(function(){
+
+	$('input[name=distance]:radio').click(function(){
+		$('#tags_nearby').html('');
+		update_nearby($('input[name=distance]:radio:checked').val());
+	});
+	$('input[name=type]:radio').change(function(){
 		$('#search').attr('disabled', false);
 		$('#submit').attr('disabled', false);
 		if ($('input:radio:checked').val() == "Date"){
@@ -43,7 +53,8 @@
 		return false;
 	});
 
-	function findtags(position) {
+	var radius = 0.1;
+	function getLocation(position) {
 		<% @thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1") %>
 
 		var tag_coords = [
@@ -70,14 +81,18 @@
 			// in km
 			var d = Math.sqrt(x*x + y*y) * R;
 			// if within 100m...say it's a nearby tag
-			if ( d <= 0.1){
-				$('#tags_nearby').append('<a href="#">'+tag_coords[i].tag+'</a> |');
+			if ( d <= radius * 1.6){
+				$('#tags_nearby').append('<a href=/tags?tag='+tag_coords[i].tag+'>'+tag_coords[i].tag+'</a> |');
 			}
 		}
 	};
 	// One-shot position request.
-    	navigator.geolocation.getCurrentPosition(findtags);
+    	navigator.geolocation.getCurrentPosition(getLocation);
 
-
+	function update_nearby(rad){
+		radius = rad;
+		// One-shot position request.
+	    	navigator.geolocation.getCurrentPosition(getLocation);
+	};
 
 </script>

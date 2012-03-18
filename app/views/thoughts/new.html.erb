@@ -213,11 +213,11 @@
 
 	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected").val() == "By Date")
-		{	$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-dd-mm'}).focus();
+		{	$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-mm-dd'}).focus();
 		}
 		if ($("#thought_timeframe option:selected").val() == "Every"){
 			$("#frequency").show().focus();
-			$("#frequency_date").show().datepicker({dateFormat: 'yy-dd-mm'});
+			$("#frequency_date").show().datepicker({dateFormat: 'yy-mm-dd'});
 			$("#thought_timeframe_date").show();
 		}
 		if ($("#thought_timeframe option:selected").val() == "Soon" || $("#thought_timeframe option:selected").val() == "Someday"){

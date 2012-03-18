@@ -40,7 +40,7 @@
 		<% counter = 0 %>
 		<% @thoughts.each_cons(2) do |thought, next_thought| %>
 			<% if flag != thought.tag %>
-				<span id="<%= thought.id %>"><%= thought.tag %></span>
+				<span id="<%= thought.id %>"><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></span>
 				<ul id="ul<%= thought.id %>">
 			<% end %>
 					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
@@ -54,7 +54,7 @@
 					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
 				</ul>
 				<% else %>
-				<span><%= next_thought.tag %></span>
+				<span><a href="/tags?tag=<%= next_thought.tag %>"><%= next_thought.tag %></a></span>
 				<ul>
 					<li><%= next_thought.id %> | <%= next_thought.idea %> | <%= next_thought.timeframe %></li>
 				</ul>

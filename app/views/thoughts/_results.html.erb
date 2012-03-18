@@ -23,7 +23,12 @@
 				<td><%= thought.id %></td>
 				<td><%= thought.idea %></td>
 				<td><%= thought.timeframe %></td>
-				<td><%= thought.timeframe_date %></td>
+				<td><a href="/dates?date=<%= thought.timeframe_date %>"><%= thought.timeframe_date %></a>
+
+
+
+
+				</td>
 				<td><%= thought.user_id %></td>
 				<td><%= thought.tag %></td>
 				<td><%= link_to 'Show', thought %></td>

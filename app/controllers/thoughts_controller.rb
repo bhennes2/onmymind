@@ -24,7 +24,7 @@ class ThoughtsController < ApplicationController
 		end
 		if params[:type] == "tag"
 			@title = "Thoughts by tag"
-			@thoughts = Thought.order("tag DESC")
+			@thoughts = Thought.order("tag DESC").where(:user_id => current_user.id)
 		end
 		if params[:type] == "location"
 			@title = "Thoughts by location"

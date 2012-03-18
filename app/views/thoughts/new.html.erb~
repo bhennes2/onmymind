@@ -285,7 +285,7 @@
 		$('#map_area').show();
 		google.maps.event.trigger(map, "resize");
 		map.setCenter( new google.maps.LatLng(latitude, longitude) );
-		map.setZoom(12);
+		map.setZoom(13);
 	});
 
 	function initialize(position) {

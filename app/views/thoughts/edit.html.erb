@@ -155,7 +155,7 @@
 	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected").val() == "By Date")
 		{	$("#select_date").show();
-			$("#thought_timeframe_date").datepicker({dateFormat: 'yy-dd-mm'}).focus();
+			$("#thought_timeframe_date").datepicker({dateFormat: 'yy-mm-dd'}).focus();
 		}
 		else{
 			$("#select_date").hide();

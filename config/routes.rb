@@ -11,6 +11,8 @@ Onmymind::Application.routes.draw do
 	match 'thoughts-filter' => 'thoughts#filter'
 
 	match '/completed' => 'thoughts#completed'
+	match '/tags' => 'pages#tags'
+	match '/dates' => 'pages#dates'
 
 	  # The priority is based upon order of creation:
 	  # first created -> highest priority.

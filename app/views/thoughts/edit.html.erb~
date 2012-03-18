@@ -22,7 +22,7 @@
 		<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %><br />
 		<% if @thought.timeframe == "By Date" %>
 			<div id="select_date">
-				<input id="thought_timeframe_date" type="date" value="<%= @thought.timeframe_date %>"/>
+				<%= f.text_field :timeframe_date %>
 			</div>
 		<% end %>
 	</div>
