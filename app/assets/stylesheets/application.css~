@@ -12,11 +12,7 @@
  *= require_tree .
 */
 
-#thought_note_image { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
-#thought_note_location { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
-#thought_note_link { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
-#thought_note_email { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
-#thought_note_text { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
+.checkbox { width: 40px; height: 38px; -webkit-appearance: none; margin: 0 8px 0 8px; }
 
 #thought_note_image { background: url('/assets/picture-off.png'); }
 #thought_note_image:checked { background: url('/assets/picture-on.png'); }

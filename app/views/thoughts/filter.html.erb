@@ -7,26 +7,34 @@
 <% if params[:type] == "timeframe" %>
 	<a id="title_soon">Soon (<%= @thoughts_soon.count %>)</a> | <a id="title_someday">Someday (<%= @thoughts_someday.count %>)</a> | <a id="title_by_date">By Date (<%= @thoughts_by_date.count %>)</a> | <a id="title_every">Every (<%= @thoughts_every.count %>)</a>
 	<div id="results_timeframe">
+		<% if @thoughts_soon.count != 0 %>
 		<ul id="list_soon" >
 			<% @thoughts_soon.each do |thought| %>
 				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
+		<% end %>
+		<% if @thoughts_someday.count != 0 %>
 		<ul id="list_someday" style=" display: none; " >
 			<% @thoughts_someday.each do |thought| %>
 				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
+		<% end %>
+		<% if @thoughts_by_date.count != 0 %>
 		<ul id="list_by_date" style=" display: none; " >
 			<% @thoughts_by_date.each do |thought| %>
 				<li><%= thought.idea %> | <%= thought.timeframe_date %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
+		<% end %>
+		<% if @thoughts_every.count != 0 %>
 		<ul id="list_every" style=" display: none; " >
 			<% @thoughts_every.each do |thought| %>
 				<li><%= thought.idea %> | <%= thought.tag %> | <%= link_to 'View', thought %></li>
 			<% end %>
 		</ul>
+		<% end %>
 	</div>
 
 <%= link_to 'New Thought', new_thought_path %><br />
@@ -35,13 +43,13 @@
 <% end %>
 
 <% if params[:type] == "tag" %>
-	<% if !@thoughts.nil? %>
+	<% if (!@thoughts.nil? && @thoughts.count > 1) %>
 		<% flag = "" %>
 		<% counter = 0 %>
 		<% @thoughts.each_cons(2) do |thought, next_thought| %>
 			<% if flag != thought.tag %>
 				<span id="<%= thought.id %>"><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></span>
-				<ul id="ul<%= thought.id %>">
+				<ul id="ul<%= thought.id %>" style="display: none;">
 			<% end %>
 					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
 			<% if next_thought.tag != thought.tag %>
@@ -55,13 +63,21 @@
 				</ul>
 				<% else %>
 				<span><a href="/tags?tag=<%= next_thought.tag %>"><%= next_thought.tag %></a></span>
-				<ul>
+				<ul style="display: none;">
 					<li><%= next_thought.id %> | <%= next_thought.idea %> | <%= next_thought.timeframe %></li>
 				</ul>
 				<% end %>
 			<% end %>
 		<% end %>
+	<% elsif @thoughts.count == 1 %>
+		<% @thoughts.each do |thought| %>
+				<span id="<%= thought.id %>"><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></span>
+				<ul id="ul<%= thought.id %>" style="display: none;">
+					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
+				</ul><br/>
+		<% end %>
 	<% end %>
+
 <%= link_to 'New Thought', new_thought_path %><br />
 <%= link_to 'Back', thoughts_path %>
 
@@ -86,8 +102,13 @@
 			<% end %>
 
 		<% end %>
-	<% end %></p>
-	<script>
+	<% end %>
+	</p>
+	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
+	<%= link_to 'New Thought', new_thought_path %><br />
+	<%= link_to 'Back', thoughts_path %>
+	<% end %>
+<script>
 	var marker = [];
 	var map;
 	function showMap(position) {
@@ -110,6 +131,7 @@
 
 		var infowindow = [];
 		var counter = 0;
+		<% if @thoughts == [] %>
 		<% @thoughts.each do |thought| %>
 			marker[counter] = new google.maps.Marker({
 				position: new google.maps.LatLng(<%= thought.location_content %>),
@@ -126,6 +148,7 @@
 			});
 			counter++;
 		<% end %>
+		<% end %>
 
 
 	}
@@ -138,14 +161,6 @@
 	navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
 	google.maps.event.trigger(map, "resize");
 
-
-	</script>
-	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
-<%= link_to 'New Thought', new_thought_path %><br />
-<%= link_to 'Back', thoughts_path %>
-<% end %>
-
-<script>
 	function filter_map(tag){
 		for (var i=0; i < marker.length; i++){
 			if (marker[i].getTitle() == tag || tag == "all"){
@@ -153,8 +168,6 @@
 			}
 			else
 				marker[i].setVisible(false);
-
-
 		}
 	}
 

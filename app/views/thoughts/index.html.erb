@@ -1,11 +1,4 @@
-<h1><%= @title %></h1>
-<p><strong>Filter by: </strong><a class="completion">All</a> (<%= Thought.all.count %>) | <a class="completion">Completed</a> (<%= Thought.all.count-Thought.where(:complete => [nil, false]).count%>) | <a class="completion">Incomplete</a>  (<%= Thought.where(:complete => [nil, false]).count %>)</p>
-
-<div id="results">
-
-	<%= render :partial => 'results' %>
-</div>
-
+<% if @count != 0 %>
 <p> View by:
 
 <a style="color: blue; text-decoration: underline;" id="timeframe" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Timeframe</a> |
@@ -13,6 +6,14 @@
 <a style="color: blue; text-decoration: underline;" id="location" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Location</a>
 
 </p>
+<% end %>
+<div id="results">
+	<h1><%= @title %></h1>
+	<p><strong>Filter by: </strong><a class="completion">All</a> (<%= @count %>) | <a class="completion">Completed</a> (<%= @count-@count_incomplete %>) | <a 		class="completion">Incomplete</a>  (<%= @count_incomplete %>)</p>
+	<%= render :partial => 'results' %>
+</div>
+
+
 
 <script>
 	$('.checkbox').change(function(){

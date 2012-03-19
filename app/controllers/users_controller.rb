@@ -10,6 +10,10 @@ class UsersController < ApplicationController
 	def show
 		@title = "Showing user profile"
 		@user = User.find(params[:id])
+
+		if current_user.admin?
+			@users = User.all
+		end
   	end
 	def create
     		@user = User.new(params[:user])

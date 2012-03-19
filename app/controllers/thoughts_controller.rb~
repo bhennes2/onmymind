@@ -1,34 +1,76 @@
 class ThoughtsController < ApplicationController
 
 	before_filter :signed_in_user
-	before_filter :correct_user, :only => [:show, :edit]
+	before_filter :edit_correct_user, :only => [:edit]
+	before_filter :admin_user, :only => [:show]
 
 	# GET /thoughts
   	# GET /thoughts.xml
 	def index
 		@title = "Viewing my thoughts"
-		#respond_to do |format|
-      			#format.html # index.html.erb
-			#format.xml  { render :xml => @thoughts }
-		#end
+
+		# Thought counter
+		if current_user.admin?
+			@count = Thought.all.count
+			@count_incomplete = Thought.where(:complete => [nil, false]).count
+		else
+			@count = Thought.where(:user_id => current_user.id).count
+			@count_incomplete = Thought.where(:user_id => current_user.id, :complete => [nil, false]).count
+		end
+
+		# Thoughts
+		if current_user.admin?
+			if params[:type] == "Incomplete"
+				@thoughts = Thought.where(:complete => [nil, false])
+			elsif params[:type] == "Completed"
+				@thoughts = Thought.where(:complete => true)
+			else
+				@thoughts = Thought.all
+			end
+		else
+			if params[:type] == "Incomplete"
+				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id)
+			elsif params[:type] == "Completed"
+				@thoughts = Thought.where(:complete => true, :user_id => current_user.id)
+			else
+				@thoughts = Thought.where(:user_id => current_user.id)
+			end
+		end
+
 	end
 
 	def filter
 		if params[:type] == "timeframe"
 			@title = "Thoughts by timeframe"
 
-			@thoughts_soon = Thought.where(:timeframe => "Soon")
-			@thoughts_someday = Thought.where(:timeframe => "Someday")
-			@thoughts_by_date = Thought.where(:timeframe => "By Date")
-			@thoughts_every = Thought.where(:timeframe => "Every")
+			if current_user.admin?
+				@thoughts_soon = Thought.where(:timeframe => "Soon")
+				@thoughts_someday = Thought.where(:timeframe => "Someday")
+				@thoughts_by_date = Thought.where(:timeframe => "By Date")
+				@thoughts_every = Thought.where(:timeframe => "Every")
+			else
+				@thoughts_soon = Thought.where(:timeframe => "Soon", :user_id => current_user.id)
+				@thoughts_someday = Thought.where(:timeframe => "Someday", :user_id => current_user.id)
+				@thoughts_by_date = Thought.where(:timeframe => "By Date", :user_id => current_user.id)
+				@thoughts_every = Thought.where(:timeframe => "Every", :user_id => current_user.id)
+			end
 		end
 		if params[:type] == "tag"
 			@title = "Thoughts by tag"
-			@thoughts = Thought.order("tag DESC")
+			if current_user.admin?
+				@thoughts = Thought.order("tag DESC")
+			else
+				@thoughts = Thought.order("tag DESC").where(:user_id => current_user.id)
+			end
 		end
 		if params[:type] == "location"
 			@title = "Thoughts by location"
-			@thoughts = Thought.where(:note_location => "1")
+
+			if current_user.admin?
+				@thoughts = Thought.where(:note_location => "1")
+			else
+				@thoughts = Thought.where(:note_location => "1", :user_id => current_user.id)
+			end
 		end
 
 	end
@@ -70,10 +112,16 @@ class ThoughtsController < ApplicationController
 	# GET /thoughts/new.xml
 	def new
   		@title = "Speaking of that..."
+		@h1 = "This just popped into my head..."
 		@thought = Thought.new
+
 		@thoughts = Thought.all
 
-		@thoughts_location = Thought.where(:user_id => current_user.id, :note_location => "1")
+		if current_user.admin?
+			@thoughts_location = Thought.where(:note_location => "1")
+		else
+			@thoughts_location = Thought.where(:user_id => current_user.id, :note_location => "1")
+		end
 
 		respond_to do |format|
 		      format.html # new.html.erb
@@ -81,11 +129,19 @@ class ThoughtsController < ApplicationController
 		end
 	end
 
-  # GET /thoughts/1/edit
-  def edit
-	@thought = Thought.find(params[:id])
-	@thoughts = Thought.all
-  end
+	  # GET /thoughts/1/edit
+	  def edit
+		@title = "Let's modify that"
+		@thought = Thought.find(params[:id])
+		@h1 = "Editing my thoughts"
+		@thoughts = Thought.all
+
+		if current_user.admin?
+			@thoughts_location = Thought.where(:note_location => "1")
+		else
+			@thoughts_location = Thought.where(:user_id => current_user.id, :note_location => "1")
+		end
+	  end
 
   # POST /thoughts
   # POST /thoughts.xml
@@ -139,10 +195,15 @@ class ThoughtsController < ApplicationController
 		def signed_in_user
       			redirect_to signin_path, notice: "Please sign in." unless signed_in?
     		end
-		def correct_user
+		def edit_correct_user
 			user_id = Thought.find(params[:id]).user_id
 			@user = User.find(user_id)
 			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless current_user?(@user)
+		end
+		def show_correct_or_admin_user
+			user_id = Thought.find(params[:id]).user_id
+			@user = User.find(user_id)
+			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless (current_user?(@user) || current_user.admin?)
 		end
 
 end

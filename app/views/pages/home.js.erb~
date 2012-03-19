@@ -1,13 +1,73 @@
 $('#search-results').html('<%= escape_javascript(render :partial => "search", :object => @thoughts ) %>');
 
 
-<% @thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1") %>
-var tag_coords = [
-	<% @thoughts_nearby.each do |thought| %>
-		{
-			tag: "<%= thought.tag %>",
-			lat: "<%= thought.location_content.split(',')[0] %>",
-			long: "<%= thought.location_content.split(',')[1] %>"
-		}<% if @thoughts_nearby.last != thought %>,<% end %>
-	<% end %>
-	];
+	$('input[name=distance]:radio').click(function(){
+		$('#tags_nearby').html('');
+		update_nearby($('input[name=distance]:radio:checked').val());
+	});
+	$('input[name=type]:radio').change(function(){
+		$('#search').attr('disabled', false);
+		$('#submit').attr('disabled', false);
+		if ($('input:radio:checked').val() == "Date"){
+			$('#search').datepicker({
+				dateFormat: 'yy-dd-mm',
+				showAnim: 'fold',
+				defaultDate: new Date()
+			});
+		}
+		else{
+			$('#search').datepicker("destroy");
+		}
+	});
+	$('#search').keyup(function(){
+		$('#search-results').show();
+		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		return false;
+	});
+	$('#search').change(function(){
+		$('#search-results').show();
+		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		return false;
+	});
+
+	var radius = 0.1;
+	function getLocation(position) {
+		<% @thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1") %>
+
+		var tag_coords = [
+		<% @thoughts_nearby.each do |thought| %>
+			{
+				tag: "<%= thought.tag %>",
+				lat: "<%= thought.location_content.split(',')[0] %>",
+				long: "<%= thought.location_content.split(',')[1] %>"
+			}<% if @thoughts_nearby.last != thought %>,<% end %>
+		<% end %>
+		];
+		var R = 6371; //km
+		// Current location
+		lat1 = position.coords.latitude * Math.PI/180;
+		lon1 = position.coords.longitude * Math.PI/180;
+		for (var i=0; i < tag_coords.length; i++){
+
+			// Thought location
+			lat2 = tag_coords[i].lat * Math.PI/180;
+			lon2 = tag_coords[i].long * Math.PI/180;
+
+			var x = (lon2-lon1) * Math.cos((lat1+lat2)/2);
+			var y = (lat2-lat1);
+			// in km
+			var d = Math.sqrt(x*x + y*y) * R;
+			// if within 100m...say it's a nearby tag
+			if ( d <= radius * 1.6){
+				$('#tags_nearby').append('<a href=/tags?tag='+tag_coords[i].tag+'>'+tag_coords[i].tag+'</a> |');
+			}
+		}
+	};
+	// One-shot position request.
+    	navigator.geolocation.getCurrentPosition(getLocation);
+
+	function update_nearby(rad){
+		radius = rad;
+		// One-shot position request.
+	    	navigator.geolocation.getCurrentPosition(getLocation);
+	};
