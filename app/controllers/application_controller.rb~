@@ -1,3 +1,8 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+	protect_from_forgery
+	include SessionsHelper
+
+	if signed_in?
+		@users = User.where('id <> ? ', current_user.id)
+	end
 end

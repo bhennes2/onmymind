@@ -74,7 +74,7 @@
 				<span id="<%= thought.id %>"><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></span>
 				<ul id="ul<%= thought.id %>" style="display: none;">
 					<li><%= thought.id %> | <%= thought.idea %> | <%= thought.timeframe %></li>
-				</ul>
+				</ul><br/>
 		<% end %>
 	<% end %>
 
@@ -107,7 +107,10 @@
 	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
 	<%= link_to 'New Thought', new_thought_path %><br />
 	<%= link_to 'Back', thoughts_path %>
-	<% end %>
+<% end %>
+<% if params[:type] == "friends" %>
+	<% render :partial => 'results' %>
+<% end %>
 <script>
 	var marker = [];
 	var map;

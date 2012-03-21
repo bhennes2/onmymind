@@ -1,0 +1,19 @@
+$("#commenting").html("<%= escape_javascript( render :partial => 'commenting', :object => @all_comments ) %>");
+
+var max_length = 250;
+// get current number of characters
+$('#character_counter').html(max_length - $('#comment_area').val().length);
+
+$('#comment_area').keyup(function()
+{
+	// get new length of characters
+	if ($(this).val().length >= max_length)
+	{
+		$('#character_counter').html('You have reached the maximum limit of ' + max_length);
+		$(this).val($(this).val().substr(0, max_length));
+	}
+	else
+	{
+		$('#character_counter').html(max_length - $(this).val().length);
+	}
+});

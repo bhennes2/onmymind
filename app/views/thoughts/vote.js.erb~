@@ -1,0 +1,2 @@
+$("#voting_info").html("hello");
+//$("#voting_info").html("<%= escape_javascript( render :partial => 'voting', :object => @thought ) %>");

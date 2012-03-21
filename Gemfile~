@@ -25,8 +25,13 @@ end
 gem 'jquery-rails'
 
 gem 'pg'
-gem 'postgres-pr'
+gem 'ruby-pg'
 
+# For voting on thoughts
+gem 'thumbs_up'
+
+# For commenting on thoughts
+gem 'acts_as_commentable'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

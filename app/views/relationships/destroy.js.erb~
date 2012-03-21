@@ -1,0 +1,2 @@
+$(this).html("<%= escape_javascript(render('users/friend')) %>")
+$("#current_friends").html('<%= pluralize(current_user.friends.count, 'friend') %>')

@@ -1,0 +1,41 @@
+      <span><%= link_to "view my profile", @user %></span>
+      <span><b>Microposts:</b> <%= @user.microposts.count %></span>
+    </section>
+    <section>
+      <%= render 'shared/stats' %>
+      <% unless @users.empty? %>
+        <div class="user_avatars">
+          <% @users.each do |user| %>
+            <%= link_to gravatar_for(user, :size => 30), user %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  </aside>
+  <div class="span8">
+    <h3><%= yield(:title) %></h3>
+    <% if @users.any? %>
+      <ul class="users">
+        <%= render @users %>
+      </ul>
+      <%= will_paginate @users %>
+    <% end %>
+  </div>
+</div>
+
+<table>
+	<tr>
+		<th>Username</th>
+		<th>Email</th>
+		<th>Thougts</th>
+		<th>Action</th>
+	</tr>
+<% @users.each do |user| %>
+	<tr>
+		<td><%= user.username %></td>
+		<td><%= user.email %></td>
+		<td><%= user.thoughts.count %></td>
+		<td><%= link_to 'See my profile', user %></td>
+	</tr>
+<% end %>
+</table>

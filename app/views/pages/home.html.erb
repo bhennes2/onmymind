@@ -54,15 +54,16 @@
 
 	var radius = 0.1;
 	function getLocation(position) {
-		<% @thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1") %>
 
 		var tag_coords = [
-		<% @thoughts_nearby.each do |thought| %>
-			{
-				tag: "<%= thought.tag %>",
-				lat: "<%= thought.location_content.split(',')[0] %>",
-				long: "<%= thought.location_content.split(',')[1] %>"
-			}<% if @thoughts_nearby.last != thought %>,<% end %>
+		<% if !current_user.nil? %>
+			<% @thoughts_nearby.each do |thought| %>
+				{
+					tag: "<%= thought.tag %>",
+					lat: "<%= thought.location_content.split(',')[0] %>",
+					long: "<%= thought.location_content.split(',')[1] %>"
+				}<% if @thoughts_nearby.last != thought %>,<% end %>
+			<% end %>
 		<% end %>
 		];
 		var R = 6371; //km

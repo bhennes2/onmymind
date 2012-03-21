@@ -4,9 +4,12 @@
 <a style="color: blue; text-decoration: underline;" id="timeframe" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Timeframe</a> |
 <a style="color: blue; text-decoration: underline;" id="tag" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Tag</a> |
 <a style="color: blue; text-decoration: underline;" id="location" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Location</a>
-
+<% if current_user.friends != [] || current_user.reverse_friends != [] %>
+	| <a style="color: blue; text-decoration: underline;" id="friends" onclick="$('#results').load('<%= root_url %>thoughts-filter/?type='+$(this).attr('id'))">Friends(<%= current_user.friends.count + current_user.reverse_friends.count %>)</a>
+<% end %>
 </p>
 <% end %>
+
 <div id="results">
 	<h1><%= @title %></h1>
 	<p><strong>Filter by: </strong><a class="completion">All</a> (<%= @count %>) | <a class="completion">Completed</a> (<%= @count-@count_incomplete %>) | <a 		class="completion">Incomplete</a>  (<%= @count_incomplete %>)</p>

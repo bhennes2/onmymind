@@ -1,0 +1,12 @@
+<p>Put your comments here!!!!</p>
+
+<%= text_area_tag 'comment_area', nil, :size => "40x7" %>
+<%= hidden_field_tag 'thought_id', @thought.id %>
+<span id="character_counter"></span><br />
+<%= submit_tag "Comment", :name => nil, :id => "submit" %>
+
+<p>Comments for this thought (<%= @all_comments.count %>)</p>
+<% @all_comments.each do |comment| %>
+	<p><strong><%= User.find(comment.user_id).username %> commented on <%= comment.created_at.strftime("%b %e, '%y @ %l:%M%p") %></strong></p>
+	<p><%= comment.body %></p>
+<% end %>

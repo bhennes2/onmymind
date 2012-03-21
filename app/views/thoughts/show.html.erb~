@@ -9,6 +9,9 @@
 <p><strong>Timeframe : </strong><%= @thought.timeframe %></p>
 <% if @thought.timeframe == "By Date" %>
 	<p><strong>Timeframe Date : </strong><%= @thought.timeframe_date %></p>
+<% elsif @thought.timeframe == "Every" %>
+	<p><strong>Frequency: </strong><%= @thought.timeframe_date.split(',')[0] %></p>
+	<p><strong>Starting on: </strong><%= @thought.timeframe_date.split(',')[1] %></p>
 <% end %>
 <p><strong>Tag : </strong><%= @thought.tag %></p>
 <% if @thought.note_image == "1" %>
@@ -49,6 +52,50 @@
 	<p><strong>Text : </strong><%= link_to @thought.text_content %></p>
 <% end %>
 
+<% if current_user.id != @thought.user_id %>
+<div id="commenting">
+	<%= render :partial => 'commenting' %>
+</div><!-- commenting -->
+<div id="voting_info">
+	<%= render :partial => 'voting' %>
+</div><!-- voting -->
+<% end %>
+
 <%= link_to 'Edit', edit_thought_path(@thought) %><br />
 <%= link_to 'New Thought', new_thought_path %><br />
 <%= link_to 'Back', thoughts_path %>
+
+<script>
+	function vote(choice){
+		$.post('/voting', { votable: <%= @thought.id %>, vote: choice }, null, 'script')
+		.error(function() { alert('You have already voted!');});
+		return true;
+	}
+
+	$(function(){
+		var max_length = 250;
+		// get current number of characters
+		$('#character_counter').html(max_length - $('#comment_area').val().length);
+
+		$('#comment_area').keyup(function()
+		{
+			// get new length of characters
+			if ($(this).val().length >= max_length)
+			{
+				$('#character_counter').html('You have reached the maximum limit of ' + max_length);
+				$(this).val($(this).val().substr(0, max_length));
+			}
+			else
+			{
+				$('#character_counter').html(max_length - $(this).val().length);
+			}
+		});
+	});
+	$(':submit').click(function(){
+		document.write($('#comment_area').val());
+		//$.post('/commenting', { thought_id: $('#thought_id').val(), comment_area: $('#comment_area').val() }, null, 'script')
+		//.error(function() { alert('Cannot submit comment!'); });
+		//return true;
+	});
+
+</script>

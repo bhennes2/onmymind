@@ -2,6 +2,15 @@ class PagesController < ApplicationController
 
 	def home
 		@title = "Home"
+		if !current_user.nil?
+			@users = User.where('id <> ? ', current_user.id)
+
+			if current_user.admin?
+				@thoughts_nearby = Thought.where(:note_location => "1")
+			else
+				@thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1")
+			end
+		end
 	end
 
 	def tags

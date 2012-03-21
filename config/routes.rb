@@ -1,8 +1,14 @@
 Onmymind::Application.routes.draw do
 
 	resources :thoughts
-	resources :users
+	resources :users do
+		member do
+			get :friends
+		end
+	end
+
 	resources :sessions, only: [:new, :create, :destroy]
+	resources :relationships, only: [:create, :destroy]
 
 	match '/signup' => 'users#new'
 	match '/signin' => 'sessions#new'
@@ -13,6 +19,9 @@ Onmymind::Application.routes.draw do
 	match '/completed' => 'thoughts#completed'
 	match '/tags' => 'pages#tags'
 	match '/dates' => 'pages#dates'
+
+	match '/voting' => 'thoughts#vote'
+	match '/commenting' => 'thoughts#comment'
 
 	  # The priority is based upon order of creation:
 	  # first created -> highest priority.

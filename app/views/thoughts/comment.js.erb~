@@ -1,0 +1,1 @@
+$("#commenting").html("<%= escape_javascript( render :partial => 'commenting', :object => @all_comments ) %>");

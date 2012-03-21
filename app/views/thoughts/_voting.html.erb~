@@ -1,0 +1,21 @@
+<p>
+	<% if @thought.errors.any? %>
+  	  <div id="error_explanation">
+  	    <h2><%= pluralize(@thought.errors.count, "error") %> prohibited this thought from being saved:</h2>
+
+  	    <ul>
+  	    <% @thought.errors.full_messages.each do |msg| %>
+  	      <li><%= msg %></li>
+  	    <% end %>
+  	    </ul>
+  	  </div>
+  	<% end %>
+
+
+	<%= @thought.votes_for %> <a onclick="vote(true);">
+		<img src="/assets/thumbs-up.png" style="max-height: 40px;" />
+	</a>
+	<%= @thought.votes_against %> <a onclick="vote(false);">
+		<img src="/assets/thumbs-down.png" style="max-height: 40px;" />
+	</a>
+</p>

@@ -1,0 +1,31 @@
+<%= form_tag users_path, :method => 'get', :html => { :id => "search_form" } do %>
+		<p><%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off" %>
+                   <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %><br />
+		</p>
+<% end %>
+
+<table>
+	<tr>
+		<th>Username</th>
+		<th>Email</th>
+		<th>Action</th>
+	</tr>
+<% @users.each do |user| %>
+	<tr>
+		<td><%= user.username %></td>
+		<td><%= user.email %></td>
+		<td>
+			<div id="friend_form<%= user.id %>">
+				<% @user = user %>
+		  		<% if current_user.friends?(user) %>
+					<%= render :partial => 'unfriend', :locals => { :user => @user} %>
+				<% elsif current_user.reverse_friends?(user) %>
+					<%= render :partial => 'unfriend-reverse', :locals => { :user => @user} %>
+				<% else %>
+					<%= render :partial => 'friend', :locals => { :user => @user} %>
+				<% end %>
+			</div>
+		</td>
+	</tr>
+<% end %>
+</table>

@@ -1,0 +1,3 @@
+<%= form_for(current_user.reverse_relationships.find_by_friend1_id(@user), html: { method: :delete}, remote: true) do |f| %>
+	<%= f.submit "Unfriend" %>
+<% end %>

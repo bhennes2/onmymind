@@ -2,7 +2,7 @@ class ThoughtsController < ApplicationController
 
 	before_filter :signed_in_user
 	before_filter :edit_correct_user, :only => [:edit]
-	before_filter :admin_user, :only => [:show]
+	before_filter :allowed_user, :only => [:show]
 
 	# GET /thoughts
   	# GET /thoughts.xml
@@ -54,16 +54,14 @@ class ThoughtsController < ApplicationController
 				@thoughts_by_date = Thought.where(:timeframe => "By Date", :user_id => current_user.id)
 				@thoughts_every = Thought.where(:timeframe => "Every", :user_id => current_user.id)
 			end
-		end
-		if params[:type] == "tag"
+		elsif params[:type] == "tag"
 			@title = "Thoughts by tag"
 			if current_user.admin?
 				@thoughts = Thought.order("tag DESC")
 			else
 				@thoughts = Thought.order("tag DESC").where(:user_id => current_user.id)
 			end
-		end
-		if params[:type] == "location"
+		elsif params[:type] == "location"
 			@title = "Thoughts by location"
 
 			if current_user.admin?
@@ -71,8 +69,27 @@ class ThoughtsController < ApplicationController
 			else
 				@thoughts = Thought.where(:note_location => "1", :user_id => current_user.id)
 			end
+		elsif params[:type] == "friends"
+			@title = "Thoughts of your friends"
+			@thoughts = Thought.from_friends_of(current_user)
 		end
 
+	end
+
+	def vote
+		@thought = Thought.find(params[:votable])
+		if params[:vote] == "true"
+			current_user.vote_for(@thought)
+		elsif params[:vote] == "false"
+			current_user.vote_against(@thought)
+		end
+	end
+
+	def comment
+		@thought = Thought.find(params[:thought_id])
+		@comment = Comment.build_from( @thought, current_user.id, params[:comment_area] )
+		@comment.save
+		@all_comments = @thought.comment_threads.order("comments.created_at DESC")
 	end
 
 	def completed
@@ -100,13 +117,14 @@ class ThoughtsController < ApplicationController
 
 		@title = "Viewing a thought"
 		@thought = Thought.find(params[:id])
+		@all_comments = @thought.comment_threads.order(:created_at.desc)
 
 		respond_to do |format|
 			format.html # show.html.erb
 			format.xml  { render :xml => @thought }
 		end
 
-  end
+  	end
 
   	# GET /thoughts/new
 	# GET /thoughts/new.xml
@@ -200,10 +218,12 @@ class ThoughtsController < ApplicationController
 			@user = User.find(user_id)
 			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless current_user?(@user)
 		end
-		def show_correct_or_admin_user
+		def allowed_user
 			user_id = Thought.find(params[:id]).user_id
 			@user = User.find(user_id)
-			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless (current_user?(@user) || current_user.admin?)
+			redirect_to root_path, notice: "Cannot view other's thoughts unless friends!" unless (current_user?(@user) ||
+													      current_user.admin? ||
+													      current_user.friends?(@user))
 		end
 
 end

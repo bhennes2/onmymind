@@ -107,7 +107,10 @@
 	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
 	<%= link_to 'New Thought', new_thought_path %><br />
 	<%= link_to 'Back', thoughts_path %>
-	<% end %>
+<% end %>
+<% if params[:type] == "friends" %>
+	<%= render :partial => 'results' %>
+<% end %>
 <script>
 	var marker = [];
 	var map;
