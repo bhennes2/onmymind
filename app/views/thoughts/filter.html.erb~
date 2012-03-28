@@ -104,17 +104,18 @@
 		<% end %>
 	<% end %>
 	</p>
-	<div id="map_canvas" style="width: 500px; height: 500px;"></div>
+	<div id="map_holder"><div id="map_canvas" style="width: 500px; height: 500px;"></div></div>
 	<%= link_to 'New Thought', new_thought_path %><br />
 	<%= link_to 'Back', thoughts_path %>
 <% end %>
 <% if params[:type] == "friends" %>
-	<% render :partial => 'results' %>
+	<%= render :partial => 'results' %>
 <% end %>
 <script>
 	var marker = [];
 	var map;
 	function showMap(position) {
+		$("#map_holder").append('');
 		// Show a map centered at (position.coords.latitude, position.coords.longitude).
 		var myOptions = {
           		center: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
@@ -124,6 +125,9 @@
         	};
 	        map = new google.maps.Map(document.getElementById("map_canvas"),
         	    myOptions);
+
+		google.maps.event.trigger(map, "resize");
+
 		var marker_here = new google.maps.Marker({
       			position: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
 			map: map,
@@ -134,35 +138,36 @@
 
 		var infowindow = [];
 		var counter = 0;
-		<% if @thoughts == [] %>
-		<% @thoughts.each do |thought| %>
-			marker[counter] = new google.maps.Marker({
-				position: new google.maps.LatLng(<%= thought.location_content %>),
-				map: map,
-				title: "<%= thought.tag %>",
-				options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
-			});
-			infowindow[counter] = new google.maps.InfoWindow({
-				content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
-				zIndex: counter
-			});
-			google.maps.event.addListener(marker[counter], 'click', function() {
-				infowindow[this.zIndex].open(map,this);
-			});
-			counter++;
+		<% if @thoughts != [] %>
+			<% @thoughts.each do |thought| %>
+				marker[counter] = new google.maps.Marker({
+					position: new google.maps.LatLng(<%= thought.location_content %>),
+					map: map,
+					title: "<%= thought.tag %>",
+					options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
+				});
+				infowindow[counter] = new google.maps.InfoWindow({
+					content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
+					zIndex: counter
+				});
+				google.maps.event.addListener(marker[counter], 'click', function() {
+					infowindow[this.zIndex].open(map,this);
+				});
+				counter++;
+			<% end %>
 		<% end %>
-		<% end %>
-
-
 	}
 
 	function error(position) {
 		alert("No location found!");
 	}
 
-	// One-shot position request.
-	navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
-	google.maps.event.trigger(map, "resize");
+	$(document).ready(function(){
+		// One-shot position request.
+		navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
+		//google.maps.event.trigger(map, "resize");
+
+	});
 
 	function filter_map(tag){
 		for (var i=0; i < marker.length; i++){

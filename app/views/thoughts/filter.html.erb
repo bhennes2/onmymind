@@ -124,6 +124,9 @@
         	};
 	        map = new google.maps.Map(document.getElementById("map_canvas"),
         	    myOptions);
+
+		google.maps.event.trigger(map, "resize");
+
 		var marker_here = new google.maps.Marker({
       			position: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
 			map: map,
@@ -134,35 +137,36 @@
 
 		var infowindow = [];
 		var counter = 0;
-		<% if @thoughts == [] %>
-		<% @thoughts.each do |thought| %>
-			marker[counter] = new google.maps.Marker({
-				position: new google.maps.LatLng(<%= thought.location_content %>),
-				map: map,
-				title: "<%= thought.tag %>",
-				options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
-			});
-			infowindow[counter] = new google.maps.InfoWindow({
-				content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
-				zIndex: counter
-			});
-			google.maps.event.addListener(marker[counter], 'click', function() {
-				infowindow[this.zIndex].open(map,this);
-			});
-			counter++;
+		<% if @thoughts != [] %>
+			<% @thoughts.each do |thought| %>
+				marker[counter] = new google.maps.Marker({
+					position: new google.maps.LatLng(<%= thought.location_content %>),
+					map: map,
+					title: "<%= thought.tag %>",
+					options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
+				});
+				infowindow[counter] = new google.maps.InfoWindow({
+					content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
+					zIndex: counter
+				});
+				google.maps.event.addListener(marker[counter], 'click', function() {
+					infowindow[this.zIndex].open(map,this);
+				});
+				counter++;
+			<% end %>
 		<% end %>
-		<% end %>
-
-
 	}
 
 	function error(position) {
 		alert("No location found!");
 	}
 
-	// One-shot position request.
-	navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
-	google.maps.event.trigger(map, "resize");
+	$(document).ready(function(){
+		// One-shot position request.
+		navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true} );
+		//google.maps.event.trigger(map, "resize");
+
+	});
 
 	function filter_map(tag){
 		for (var i=0; i < marker.length; i++){

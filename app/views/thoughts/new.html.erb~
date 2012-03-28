@@ -206,22 +206,25 @@
 			$("#thought_idea").focus();
 			return false;
 		}
-		if ($("#thought_timeframe").val() == " ")
+		else if ($("#thought_timeframe").val() == " ")
 		{
 			alert("Must select a timeframe.");
 			$("#thought_timeframe").focus();
 			return false;
 		}
-		if ($("#thought_tag").val() == "")
+		else if ($("#thought_tag").val() == "")
 		{
 			alert("Must submit a tag.");
 			$("#thought_tag").focus();
 			return false;
 		}
-		var value = $("#thought_reminder_timeframe").val();
-		if (isNaN(value) || value <= 0){
-			alert("Value must be an integer greater than 0!  Please re-enter.");
-			return false;
+		var checked = $(this).is(':checked');
+		if (checked){
+			var value = $("#thought_reminder_timeframe").val();
+			if (isNaN(value) || value <= 0){
+				alert("Value must be an integer greater than 0!  Please re-enter.");
+				return false;
+			}
 		}
 	});
 
