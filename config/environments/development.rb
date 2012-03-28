@@ -6,7 +6,7 @@ config.action_mailer.smtp_settings = {
   :port                 => 587,
   :domain               => 'baci.lindsaar.net',
   :user_name            => 'brendan@amaising.com', 	#This needs to be changed to a generic email
-  :password             => 'amaising_2012',		#This needs to be changed to a new password
+  :password             => '',		#This needs to be changed to a new password
   :authentication       => 'plain',
   :enable_starttls_auto => true  }
 
