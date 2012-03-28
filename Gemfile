@@ -33,6 +33,12 @@ gem 'thumbs_up'
 # For commenting on thoughts
 gem 'acts_as_commentable_with_threading', :git => 'https://github.com/dfischer/acts_as_commentable_with_threading.git'
 
+# For changing states of relationship through acceptance process
+gem "state_machine", "~> 1.1.2"
+
+# For handling tasks in the background
+gem 'delayed_job_active_record'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

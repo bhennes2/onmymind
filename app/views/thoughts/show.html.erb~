@@ -52,6 +52,10 @@
 	<p><strong>Text : </strong><%= link_to @thought.text_content %></p>
 <% end %>
 
+<% if @thought.reminder_timeframe != "0" %>
+	<p><strong>You will be reminded : </strong><%= pluralize(@thought.reminder_timeframe, 'day') %>before due date</p>
+<% end %>
+
 <% if current_user.id != @thought.user_id %>
 <div id="commenting">
 	<%= render :partial => 'commenting' %>
@@ -92,10 +96,9 @@
 		});
 	});
 	$(':submit').click(function(){
-		document.write($('#comment_area').val());
-		//$.post('/commenting', { thought_id: $('#thought_id').val(), comment_area: $('#comment_area').val() }, null, 'script')
-		//.error(function() { alert('Cannot submit comment!'); });
-		//return true;
+		$.post('/commenting', { thought_id: $('#thought_id').val(), comment_area: $('#comment_area').val() }, null, 'script')
+		.error(function() { alert('Cannot submit comment!'); });
+		return true;
 	});
 
 </script>

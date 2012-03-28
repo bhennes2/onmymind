@@ -2,6 +2,9 @@
 	<a href="<%= root_url %>"><img src="/assets/logo.jpg" style="width: 80px; height: 113px; float: left;" /></a><h1>OnMyMind.....omm</h1>
 <% if signed_in? %>
 	Welcome <%= current_user.username %><% if current_user.admin? %> (admin) <% end %><br />
-	<%= link_to "Profile", current_user %> | <%= link_to "What's on  my mind", thoughts_path %> | <%= link_to "A new thought...", new_thought_path %> | <%= link_to "Find others", users_path %> | <%= link_to "Sign out", signout_path, method: :delete %>
+	<%= link_to "Profile", current_user %> | <%= link_to "What's on  my mind", thoughts_path %> | <%= link_to "A new thought...", new_thought_path %> | <%= link_to "Find others", users_path %> | <%= link_to "Sign out", signout_path, method: :delete %><br />
+	<section>
+		Social: <%= render 'shared/stats' %>
+	</section>
 <% end %>
 </header>

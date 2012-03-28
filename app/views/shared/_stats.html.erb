@@ -1,5 +1,7 @@
 <% @user ||= current_user %>
 <div class="stats">
-	<a id="current_friends" href="<%= friends_user_path(current_user) %>"><%= pluralize(current_user.friends.count + current_user.reverse_friends.count, 'friend') %></a> |
+	<a id="current_friends" href="<%= friends_user_path(current_user) %>">
+		<%= pluralize(Relationship.where(:friend1_id => current_user.id, :state => "friends").count + Relationship.where(:friend2_id => current_user.id, :state => "friends").count, 'friend') %>
+	</a> |
 	<a href="<%= users_path %>"><%= pluralize(User.where('id <> ? ', current_user.id).count, 'user') %></a>
 </div>

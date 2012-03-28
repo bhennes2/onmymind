@@ -1,8 +1,10 @@
 <h1><%= @h1 %></h1>
-
+<!--<p>Top tags:
+<% @top_tags.each do |thought| %>
+	<a class="top_tag" href="/quicktag?id=<%= thought.id %>"><%= thought.tag %></a>
+<% end %>
+</p>-->
 <%= render :partial => 'form' %>
-
-
 
 <script>
 	$(function(){
@@ -38,30 +40,66 @@
 
 	});
 
-	$("#thought_note_image").click(function(){
-		if ($("#thought_note_image:checked")){
+	$(".checkbox").click(function(){
+		var checked = $(this).is(':checked');
+		var selected_id = $(this).attr('id');
+		var id_parts = selected_id.split("_", 3);
+		id = id_parts[0] + "_" + id_parts[2] + "_content";
+		if (checked){
+			$(".note_content_field").hide();
+
+			if (id_parts[2] == "location") {
+				$("#"+id_parts[2]+"_information").show();
+			}
+			if (id_parts[2] == "email" || id_parts[2] == "text") {
+				$("#"+id).show().attr('rows', 5);
+			}
+			else {
+				$("#"+id).show();
+			}
+		}
+		else {
+			if (id_parts[2] == "location") {
+				$("#"+id_parts[2]+"_information").hide();
+			}
+			$("#"+id).hide();
+		}
+	});
+
+	/*$("#thought_note_image").click(function(){
+		var checked = $(this).is(':checked');
+		if (checked){
 			$(".note_content_field").hide();
 			$("#thought_image_content").show().val('/assets/rails.png');
 		}
 		else {
-			document.write("hello");
+			$("#thought_image_content").hide();
 		}
 	});
 
 	$("#thought_note_link").change(function(){
-		if ($("#thought_note_link:checked")){
+		var checked = $(this).is(':checked');
+		if (checked){
 			$(".note_content_field").hide();
 			$("#thought_link_content").show().val(window.location).attr('rows', 1);
+		}
+		else {
+			$("#thought_link_content").hide()
 		}
 	});
 
 	$("#thought_note_location").change(function(){
-		if ($("#thought_note_location:checked")){
+		var checked = $(this).is(':checked');
+		if (checked){
 			$(".note_content_field").hide();
 			$("#location_information").show();
 			$("#thought_location_content").show();
 		}
-	});
+		else {
+			$("#location_information").hide();
+			$("#thought_location_content").hide();
+		}
+	});*/
 
 	$("#locate_current").click(function(){
 			function showMap(position) {
@@ -77,32 +115,47 @@
 	});
 
 
-	$("#thought_note_email").change(function(){
-		if ($("#thought_note_email:checked")){
+	/*$("#thought_note_email").change(function(){
+		var checked = $(this).is(':checked');
+		if (checked){
 			$(".note_content_field").hide();
 			$("#thought_email_content").show().attr('rows', 5);
+		}
+		else {
+			$("#thought_email_content").hide();
 		}
 	});
 
 
 	$("#thought_note_text").change(function(){
-		if ($("#thought_note_text:checked")){
+		var checked = $(this).is(':checked');
+		if (checked){
 			$(".note_content_field").hide();
 			$("#thought_text_content").show().attr('rows', 5);
 		}
-	});
+		else {
+			$("#thought_text_content").hide();
+		}
+	});*/
 
 	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected").val() == "By Date")
-		{	$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-mm-dd'}).focus();
+		{	$("#reminder_area").show();
+			$("#frequency_date").hide();
+			$("#frequency").hide();
+			$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-mm-dd'}).focus();
 		}
-		if ($("#thought_timeframe option:selected").val() == "Every"){
+		else if ($("#thought_timeframe option:selected").val() == "Every"){
+			$("#reminder_area").show();
 			$("#frequency").show().focus();
 			$("#frequency_date").show().datepicker({dateFormat: 'yy-mm-dd'});
-			$("#thought_timeframe_date").show();
-		}
-		if ($("#thought_timeframe option:selected").val() == "Soon" || $("#thought_timeframe option:selected").val() == "Someday"){
 			$("#thought_timeframe_date").hide();
+		}
+		else if ($("#thought_timeframe option:selected").val() == "Soon" || $("#thought_timeframe option:selected").val() == "Someday"){
+			$("#reminder_area").hide();
+			$("#thought_timeframe_date").hide();
+			$("#frequency_date").hide();
+			$("#frequency").hide();
 		}
 	});
 	$(".frequency").change(function(){
@@ -139,6 +192,36 @@
 
 		else{
 			$("#note_content").hide();
+		}
+	});
+
+	$("#reminder").change(function(){
+		$("#reminder_input").toggle();
+	});
+
+	$("#new_thought").submit(function(){
+		if ($("#thought_idea").val() == "")
+		{
+			alert("Must submit an idea.");
+			$("#thought_idea").focus();
+			return false;
+		}
+		if ($("#thought_timeframe").val() == " ")
+		{
+			alert("Must select a timeframe.");
+			$("#thought_timeframe").focus();
+			return false;
+		}
+		if ($("#thought_tag").val() == "")
+		{
+			alert("Must submit a tag.");
+			$("#thought_tag").focus();
+			return false;
+		}
+		var value = $("#thought_reminder_timeframe").val();
+		if (isNaN(value) || value <= 0){
+			alert("Value must be an integer greater than 0!  Please re-enter.");
+			return false;
 		}
 	});
 

@@ -1,0 +1,3 @@
+FriendMailer#request
+
+<%= @greeting %>, find me in app/views/app/views/friend_mailer/request.text.erb

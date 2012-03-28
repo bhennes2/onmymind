@@ -81,8 +81,11 @@
 			// in km
 			var d = Math.sqrt(x*x + y*y) * R;
 			// if within 100m...say it's a nearby tag
+
+			// Reformat tag if there is whitespace
+			tag_reformat = tag_coords[i].tag.replace(" ","%20");
 			if ( d <= radius * 1.6){
-				$('#tags_nearby').append('<a href=/tags?tag='+tag_coords[i].tag+'>'+tag_coords[i].tag+'</a> |');
+				$('#tags_nearby').append('<a href=/tags?tag='+tag_reformat+'>'+tag_coords[i].tag+'</a> |');
 			}
 		}
 	};

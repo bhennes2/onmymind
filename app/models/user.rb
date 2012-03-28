@@ -2,10 +2,10 @@ class User < ActiveRecord::Base
 
 	has_many :thoughts, dependent: :destroy
 	has_many :relationships, foreign_key: "friend1_id", dependent: :destroy
-	has_many :friends, through: :relationships, source: :friend2
+	has_many :friends, through: :relationships, source: :friend2, :conditions => "relationships.state = 'friends'"
 
 	has_many :reverse_relationships, foreign_key: "friend2_id", class_name: "Relationship", dependent: :destroy
-	has_many :reverse_friends, through: :reverse_relationships, source: :friend1
+	has_many :reverse_friends, through: :reverse_relationships, source: :friend1, :conditions => "relationships.state = 'friends'"
 
 	#Allows users to vote on thoughts
 	acts_as_voter
@@ -19,13 +19,35 @@ class User < ActiveRecord::Base
 
 	validates :password, length: { minimum: 6 }
 
-
-
 	def friends?(other_user)
 		if relationships.find_by_friend2_id(other_user.id).nil?
-			reverse_relationships.find_by_friend1_id(other_user.id)
+			if !reverse_relationships.find_by_friend1_id(other_user.id).nil?
+				if reverse_relationships.find_by_friend1_id(other_user.id).state == "friends"
+					true
+				end
+			end
 		else
-			relationships.find_by_friend2_id(other_user.id)
+			if !relationships.find_by_friend2_id(other_user.id).nil?
+				if relationships.find_by_friend2_id(other_user.id).state == "friends"
+					true
+				end
+			end
+		end
+	end
+
+	def pending?(other_user)
+		if relationships.find_by_friend2_id(other_user.id).nil?
+			if !reverse_relationships.find_by_friend1_id(other_user.id).nil?
+				if reverse_relationships.find_by_friend1_id(other_user.id).state == "pending"
+					reverse_relationships.find_by_friend1_id(other_user.id)
+				end
+			end
+		else
+			if !relationships.find_by_friend2_id(other_user.id).nil?
+				if relationships.find_by_friend2_id(other_user.id).state == "pending"
+					relationships.find_by_friend2_id(other_user.id)
+				end
+			end
 		end
 	end
 

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Welcome to OnMyMind!</h1>
+    <p>
+      You have successfully signed up and your username is: <%= @user.username %><br/>
+    </p>
+    <p>
+      To visit the site, just follow this link <a href="<%= @url %>" target="_blank">here</a>.
+    </p>
+    <p>
+      To accept this friendship request from <%= @current_user.username %>, just follow this link <a href="<%= @url %>" target="_blank">here</a>.
+    </p>
+    <p>Thanks for joining and have a great day!</p><br />
+	<p>- OnMyMind Development Team</p>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<p>Congratulations!</p>
+
+<% you = User.find(Relationship.find(params[:id]).friend2_id)
+friend = User.find(Relationship.find(params[:id]).friend1_id)
+
+<p>You <strong><%= you.username %></strong> and <strong><%= friend.username %></strong> are now friends!</p>
+
+<p>See your friend's <%= link_to 'Profile', friend %></p>

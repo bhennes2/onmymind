@@ -4,7 +4,6 @@
 			<th>Username</th>
 			<th>Email</th>
 			<th>Thoughts</th>
-			<th>Action</th>
 		</tr>
 	<% @users.each do |user| %>
 		<tr>
@@ -12,6 +11,7 @@
 			<td><%= user.email %></td>
 			<td><%= user.thoughts.count %></td>
 			<td><%= link_to 'See my profile', user %></td>
+			<td><%= link_to 'Destroy' %></td>
 		</tr>
 	<% end %>
 	</table>

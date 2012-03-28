@@ -1,2 +1,3 @@
-$(this).html("<%= escape_javascript(render('users/unfriend')) %>")
+$("#friend_form<%= @user.id %>").html("Pending acceptance from new friend...as of <%= escape_javascript(time_ago_in_words(@current_relationship.updated_at)) %>")
+//$("#friend_form<%= @user.id %>").html("<%= escape_javascript(render('users/unfriend')) %>")
 $("#current_friends").html('<%= pluralize(current_user.friends.count, 'friend') %>')

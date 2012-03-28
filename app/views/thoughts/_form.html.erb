@@ -90,7 +90,13 @@
 		<%= f.hidden_field :user_id, :value => current_user.id %>
 		<%= f.hidden_field :complete, :value => false %>
 	</div>
-
+	<div class="field" id="reminder_area" style="display: none;">
+		<label>Set a reminder?</label>
+		<input type="checkbox" id="reminder"></input>
+		<div id="reminder_input" style="display: none;">
+			<p>Remind me <%= f.text_field :reminder_timeframe, :size => "1" %> day(s) before due date</p>
+		</div><!-- reminder_input -->
+	</div>
 
   <div class="actions">
     <%= f.submit :value => "Remember!" %>

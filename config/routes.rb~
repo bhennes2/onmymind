@@ -21,7 +21,10 @@ Onmymind::Application.routes.draw do
 	match '/dates' => 'pages#dates'
 
 	match '/voting' => 'thoughts#vote'
-	match '/comments' => 'thoughts#comment'
+	match '/commenting' => 'thoughts#comment'
+
+
+	match '/acceptance' => 'relationships#acceptance'
 
 	  # The priority is based upon order of creation:
 	  # first created -> highest priority.

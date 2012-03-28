@@ -90,6 +90,11 @@ class ThoughtsController < ApplicationController
 		@comment = Comment.build_from( @thought, current_user.id, params[:comment_area] )
 		@comment.save
 		@all_comments = @thought.comment_threads.order("comments.created_at DESC")
+		@root_comments = @thought.root_comments.order("comments.created_at DESC")
+	end
+
+	def quicktag
+		@thought = Thought.find(params[:id])
 	end
 
 	def completed
@@ -109,8 +114,6 @@ class ThoughtsController < ApplicationController
 		end
 	end
 
-
-
   	# GET /thoughts/1
   	# GET /thoughts/1.xml
   	def show
@@ -118,6 +121,7 @@ class ThoughtsController < ApplicationController
 		@title = "Viewing a thought"
 		@thought = Thought.find(params[:id])
 		@all_comments = @thought.comment_threads.order("comments.created_at DESC")
+		@root_comments = @thought.root_comments.order("comments.created_at DESC")
 
 		respond_to do |format|
 			format.html # show.html.erb
@@ -133,7 +137,9 @@ class ThoughtsController < ApplicationController
 		@h1 = "This just popped into my head..."
 		@thought = Thought.new
 
-		@thoughts = Thought.all
+		@thoughts = Thought.where(:user_id => current_user.id)
+
+		@top_tags = @thoughts.each {|thought| print thought.tag }
 
 		if current_user.admin?
 			@thoughts_location = Thought.where(:note_location => "1")
@@ -161,23 +167,22 @@ class ThoughtsController < ApplicationController
 		end
 	  end
 
-  # POST /thoughts
-  # POST /thoughts.xml
-  def create
-	@thought = Thought.new(params[:thought])
+	# POST /thoughts
+	# POST /thoughts.xml
+	def create
+		@thought = Thought.new(params[:thought])
 
-
-    respond_to do |format|
-      if @thought.save
-	  	format.html { redirect_to(thoughts_path, :notice => 'Thought was successfully created.') }
-        #format.html { redirect_to(@thought, :notice => 'Thought was successfully created.') }
-        format.xml  { render :xml => @thought, :status => :created, :location => @thought }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @thought.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
+		respond_to do |format|
+			if @thought.save
+	  			format.html { redirect_to(thoughts_path, :notice => 'Thought was successfully created.') }
+			        #format.html { redirect_to(@thought, :notice => 'Thought was successfully created.') }
+			        format.xml  { render :xml => @thought, :status => :created, :location => @thought }
+			else
+			        format.html { render :action => "new" }
+			        format.xml  { render :xml => @thought.errors, :status => :unprocessable_entity }
+			end
+		end
+	end
 
   # PUT /thoughts/1
   # PUT /thoughts/1.xml

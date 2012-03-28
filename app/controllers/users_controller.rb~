@@ -24,8 +24,13 @@ class UsersController < ApplicationController
 	def friends
 		@title = "These are your friends"
 		@user = User.find(params[:id])
-		@users = @user.friends
+		@users = @user.friends + @user.reverse_friends
 		render 'show_friends'
+	end
+
+	def activefriends
+		Relationship.where(:friend1_id => current_user.id, :state => "friends").users
+		#Relationship.where(:friend2_id => current_user.id, :state => "friends").users
 	end
 
 	def edit

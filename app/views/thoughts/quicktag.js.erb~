@@ -1,0 +1,4 @@
+$(".top_tag").click(function(){
+	$("#thought_tag").val($(this).html());
+	$("#thought_idea").focus();
+});

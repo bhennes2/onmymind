@@ -19,8 +19,8 @@
 				<% @user = user %>
 		  		<% if current_user.friends?(user) %>
 					<%= render :partial => 'unfriend', :locals => { :user => @user} %>
-				<% elsif current_user.reverse_friends?(user) %>
-					<%= render :partial => 'unfriend-reverse', :locals => { :user => @user} %>
+				<% elsif current_user.pending?(user) %>
+					<span>Pending acceptance from new friend...<%= time_ago_in_words(current_user.pending?(user).updated_at) %></span>
 				<% else %>
 					<%= render :partial => 'friend', :locals => { :user => @user} %>
 				<% end %>

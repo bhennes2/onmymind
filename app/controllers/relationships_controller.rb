@@ -4,10 +4,20 @@ class RelationshipsController < ApplicationController
 	def create
     		@user = User.find(params[:relationship][:friend2_id])
 		current_user.befriend!(@user)
+		@current_relationship = Relationship.last
+		@current_relationship.ignite
+
+		FriendMailer.delay.welcome(@user, current_user, @current_relationship.id, root_url)
+
 		respond_to do |format|
 			format.html { redirect_to @user }
 			format.js
 		end
+	end
+
+	def acceptance
+		relationship = Relationship.find(params[:id])
+		relationship.ignite
 	end
 
 	def destroy
@@ -28,6 +38,9 @@ class RelationshipsController < ApplicationController
 	private
 
 		def signed_in_user
-      			redirect_to signin_path, notice: "Please sign in." unless signed_in?
+			unless signed_in?
+				store_location
+	      			redirect_to signin_path, notice: "Please sign in."
+			end
 		end
 end

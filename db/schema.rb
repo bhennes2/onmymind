@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321134755) do
+ActiveRecord::Schema.define(:version => 20120328170608) do
 
   create_table "comments", :force => true do |t|
     t.integer  "commentable_id",   :default => 0
@@ -30,11 +30,28 @@ ActiveRecord::Schema.define(:version => 20120321134755) do
   add_index "comments", ["commentable_id"], :name => "index_comments_on_commentable_id"
   add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
   create_table "relationships", :force => true do |t|
     t.integer  "friend1_id"
     t.integer  "friend2_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "state"
   end
 
   add_index "relationships", ["friend1_id", "friend2_id"], :name => "index_relationships_on_friend1_id_and_friend2_id", :unique => true
@@ -49,8 +66,8 @@ ActiveRecord::Schema.define(:version => 20120321134755) do
     t.string   "note_image"
     t.text     "image_content"
     t.integer  "user_id"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
     t.string   "note_location"
     t.string   "note_link"
     t.string   "note_email"
@@ -60,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20120321134755) do
     t.text     "email_content"
     t.text     "text_content"
     t.boolean  "complete"
+    t.string   "reminder_timeframe", :default => "0"
   end
 
   add_index "thoughts", ["created_at"], :name => "index_thoughts_on_created_at"
