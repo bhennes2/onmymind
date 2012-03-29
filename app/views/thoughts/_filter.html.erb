@@ -1,0 +1,140 @@
+<% flash.each do |key, value| %>
+          <div class="alert alert-<%= key %>"><%= value %></div>
+<% end %>
+
+<h1><%= @title %></h1>
+
+<% if params[:type] == "timeframe" %>
+	<a id="title_soon">Soon (<%= @thoughts_soon.count %>)</a> | <a id="title_someday">Someday (<%= @thoughts_someday.count %>)</a> | <a id="title_by_date">By Date (<%= @thoughts_by_date.count %>)</a> | <a id="title_every">Every (<%= @thoughts_every.count %>)</a>
+	<div id="results_timeframe">
+		<% if @thoughts_soon.count != 0 %>
+			<table id="list_soon" class="table table-striped">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Timeframe</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_soon.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><%= thought.timeframe %></td>
+					<td><%= thought.tag %></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_someday.count != 0 %>
+			<table id="list_someday" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Timeframe</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_someday.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><%= thought.timeframe %></td>
+					<td><%= thought.tag %></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_by_date.count != 0 %>
+			<table id="list_by_date" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Timeframe</th>
+						<th>Timeframe Date</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_by_date.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><%= thought.timeframe %></td>
+					<td><%= thought.timeframe_date %></td>
+					<td><%= thought.tag %></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_every.count != 0 %>
+			<table id="list_every" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Timeframe</th>
+						<th>Timeframe Date</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_every.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><%= thought.timeframe %></td>
+					<td><%= thought.timeframe_date %></td>
+					<td><%= thought.tag %></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+	</div>
+<% end %>
+
+<% if params[:type] == "tag" %>
+	<% if !@thoughts.nil? %>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Tag</th>
+					</tr>
+				</thead>
+			<% @thoughts.each do |thought| %>
+				<tr>
+					<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+				</tr>
+			<% end %>
+			</table>
+	<% end %>
+<% end %>
+
+<% if params[:type] == "location" %>
+	<%= render :partial => 'map' %>
+<% end %>
+<% if params[:type] == "friends" %>
+	<%= render :partial => 'results' %>
+<% end %>
+<script>
+
+
+
+	$("#title_soon").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_soon").show()});
+	$("#title_someday").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_someday").show()});
+	$("#title_by_date").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_by_date").show()});
+	$("#title_every").click(function(){
+		$("#results_timeframe").children().hide();
+		$("#list_every").show()});
+
+	$("span").click(function(){
+		$("ul"+$(this).attr('id')).toggle();
+	});
+</script>

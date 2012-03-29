@@ -14,7 +14,7 @@ Onmymind::Application.routes.draw do
 	match '/signin' => 'sessions#new'
 	match '/signout' => 'sessions#destroy', via: :delete
 
-	match 'thoughts-filter' => 'thoughts#filter'
+	match '/filter' => 'thoughts#filter'
 
 	match '/completed' => 'thoughts#completed'
 	match '/tags' => 'pages#tags'

@@ -1,4 +1,4 @@
-<h1><%= @h1 %></h1>
+<h1><%= @h1 %></h1><br />
 <!--<p>Top tags:
 <% @top_tags.each do |thought| %>
 	<a class="top_tag" href="/quicktag?id=<%= thought.id %>"><%= thought.tag %></a>
@@ -102,6 +102,8 @@
 	});*/
 
 	$("#locate_current").click(function(){
+			$("#locations").hide();
+			$("#map_area").hide();
 			function showMap(position) {
     	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
 				$("#thought_location_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
@@ -111,6 +113,7 @@
     			navigator.geolocation.getCurrentPosition(showMap);
 	});
 	$("#locate_list").click(function(){
+			$("#map_area").hide();
 			$("#locations").show();
 	});
 
@@ -218,7 +221,7 @@
 			$("#thought_tag").focus();
 			return false;
 		}
-		var checked = $(this).is(':checked');
+		var checked = $("#reminder").is(':checked');
 		if (checked){
 			var value = $("#thought_reminder_timeframe").val();
 			if (isNaN(value) || value <= 0){

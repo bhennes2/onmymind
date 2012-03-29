@@ -1,7 +1,25 @@
 <% if @thoughts == [] %>
 	<p>No thoughts yet....make one <%= link_to 'here', new_thought_path %></p>
 <% else %>
-	<table>
+	<% if params[:type] != "friends" %>
+		<h1><%= @title %></h1>
+	<% end %>
+		<p class="well span10">
+		<% if params[:type] == "Completed"%>
+			<strong>Showing: </strong><a class="completion">Completed</a> (<%= @count - @count_incomplete %>) <br />
+			<strong>Filter by: </strong> <a class="completion">All</a> (<%= @count %>) | <a class="completion">Incomplete</a>  (<%= @count_incomplete %>)
+		<% elsif params[:type] == "Incomplete"%>
+			<strong>Showing: </strong><a class="completion">Incomplete</a> (<%= @count_incomplete %>) <br />
+			<strong>Filter by: </strong> <a class="completion">All</a> (<%= @count %>) | <a class="completion">Complete</a>  (<%= @count - @count_incomplete %>)
+		<% else %>
+			<strong>Showing: </strong><a class="completion">All</a> (<%= @count %>) <br />
+			<strong>Filter by: </strong><a class="completion">Completed</a> (<%= @count - @count_incomplete %>) | <a class="completion">Incomplete</a> (<%= @count_incomplete %>)
+		<% end %>
+		</p>
+
+
+	<table class="table table-striped">
+		<thead>
 		<tr>
 			<th>ID</th>
 			<th>Idea</th>
@@ -9,7 +27,12 @@
 			<th>Timeframe Date</th>
 			<th>User ID</th>
 			<th>Tag</th>
+			<th>Show</th>
+			<th>Edit</th>
+			<th>Delete</th>
+			<th>Done?</th>
 		</tr>
+		</thead>
 	<% @thoughts.each do |thought| %>
 		<tr>
 			<td><%= thought.id %></td>
@@ -17,13 +40,13 @@
 			<td><%= thought.timeframe %></td>
 			<td><a href="/dates?date=<%= thought.timeframe_date %>"><%= thought.timeframe_date %></a></td>
 			<td><%= thought.user_id %></td>
-			<td><%= thought.tag %></td>
-			<td><%= link_to 'Show', thought %></td>
-			<td><%= link_to 'Edit', edit_thought_path(thought) %></td>
-    			<td><%= link_to 'Destroy', thought, :confirm => 'Are you sure?', :method => :delete %></td>
+			<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+			<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+			<td><a href="/thoughts/<%= thought.id %>/edit"><i class="icon-pencil"></i><a/></td>
+    			<td><a href="/thoughts/<%= thought.id %>" data-confirm="Are you sure?" data-method="delete" rel="nofollow"><i class="icon-remove"></i></a></td>
 			<td><%= form_for(thought) do |f| %>
 				<div class="field">
-					<%= f.check_box :complete, :id => thought.id, :class => "checkbox" %><label>Completed</label>
+					<%= f.check_box :complete, :id => thought.id, :class => "checkbox" %>
 				</div>
 			    <% end %>
 			</td>
@@ -32,5 +55,10 @@
 	</table>
 	<br />
 <% end %>
-<%= link_to 'New Thought', new_thought_path %><br />
-<%= link_to 'Back', root_url %>
+
+<script>
+	$('a.completion').click(function(){
+		$.get("/thoughts", { type: $(this).text() }, null, 'script');
+		return false;
+	});
+</script>

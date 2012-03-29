@@ -1,8 +1,8 @@
 <p><strong>Username: </strong><%= @user.username %></p>
 <p><strong>Email: </strong><%= @user.email %></p>
 <% if current_user.admin? %>
-	<a id="display_users" onclick="toggle_users()">...Show more users...</a>
-	<table id="users" style="display: none;">
+<p><a id="display_users" onclick="toggle_users()">...Show more users...</a></p>
+	<table id="users" style="display: none;" class="table table-striped">
 		<tr>
 			<th>ID</th>
 			<th>Username</th>
@@ -23,7 +23,12 @@
 <script>
 	function toggle_users(){
 		$('#users').toggle();
-		$('#display_users').html('...Hide other users...');
+		if ($('#display_users').html() == "...Show more users..."){
+			$('#display_users').html('...Hide other users...');
+		}
+		else {
+			$('#display_users').html('...Show more users...')
+		}
 	};
 
 </script>

@@ -1,10 +1,11 @@
-<p>Put your comments here!!!!</p>
+<h2>Comments for this thought (<%= @all_comments.count %>)</h2><br />
 
 <%= render :partial => 'commenting_form' %>
 
-<p>Comments for this thought (<%= @all_comments.count %>)</p>
 <% @root_comments.each do |comment| %>
-	<p><strong><%= User.find(comment.user_id).username %> commented on <%= comment.created_at.strftime("%b %e, '%y @ %l:%M%p") %></strong></p>
+	<section class="comment">
+	<p><span class="badge badge-info"><%= User.find(comment.user_id).username %></span> commented on <%= comment.created_at.strftime("%b %e, '%y @ %l:%M%p") %></strong></p>
 	<p><%= comment.body %></p>
 	<!--<a href="/thread?id=<%= comment.id %>">Add to comment</a>-->
+	</section>
 <% end %>

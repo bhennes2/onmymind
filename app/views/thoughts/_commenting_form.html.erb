@@ -1,4 +1,6 @@
-<%= text_area_tag 'comment_area', nil, :size => "40x7" %>
-<%= hidden_field_tag 'thought_id', @thought.id %>
-<span id="character_counter"></span><br />
-<%= submit_tag "Comment", :name => nil, :id => "submit" %>
+<section class="well">
+	<%= text_area_tag 'comment_area', nil %>
+	<%= hidden_field_tag 'thought_id', @thought.id %>
+	<span id="character_counter"></span>
+	<%= submit_tag "Comment", :name => nil, :id => "submit", :class => "btn-primary" %>
+</section>

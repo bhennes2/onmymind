@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= @title %></title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <!--<%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js' %>-->
-  <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDNTgdz8LHOUFC4eTssPHmMD02N_NnQ5Xk&sensor=false"></script>-->
-  <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
-  <%= csrf_meta_tags %>
+	<title><%= @title %></title>
+	<%= stylesheet_link_tag    "application", :media => "all" %>
+	<!--<link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]>
+		<link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
+	<![endif]-->
+	<style>
+      		body {
+		        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+		}
+	</style>
+
+	<%= javascript_include_tag "application", :media => "all" %>
+	<%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js' %>
+	<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDNTgdz8LHOUFC4eTssPHmMD02N_NnQ5Xk&sensor=false"></script>-->
+	<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
+	<%= csrf_meta_tags %>
 </head>
 <body>
+	<div class="container">
 	<% if !(request.url.include? "filter") %>
 		<%= render 'layouts/header' %>
 	<% end %>
 	<% flash.each do |key, value| %>
-          <div class="flash <%= key %>"><%= value %></div>
-        <% end %>
-	<%= yield %>
-</body>
-	<% if !(request.url.include? "filter") %>
-		<%= render 'layouts/footer' %>
+	  <div class="flash <%= key %>"><%= value %></div>
 	<% end %>
+
+			<%= yield %>
+		<% if !(request.url.include? "filter") %>
+			<%= render 'layouts/footer' %>
+		<% end %>
+	</div><!-- container -->
+</body>
 </html>

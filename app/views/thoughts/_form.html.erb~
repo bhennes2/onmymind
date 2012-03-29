@@ -1,3 +1,4 @@
+<section class="well">
 <%= form_for(@thought) do |f| %>
   	<% if @thought.errors.any? %>
   	  <div id="error_explanation">
@@ -11,10 +12,10 @@
   	  </div>
   	<% end %>
 
-	<div class="field">
+	<div class="field form-inline">
 		<span>Remember to: </span>
-		<%= f.text_field :idea, :autocomplete => false %><div id="counter"></div>
-	</div>
+		<%= f.text_field :idea, :autocomplete => false %> <label id="counter"></label>
+	</div><br />
 	<div class="field">
 		<span>I'll do this: </span>
 		<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %><br />
@@ -68,7 +69,7 @@
 					<% end %>
 				</table>
 			</div><!-- locations -->
-			<div id="map_area" style="display: none;">
+			<div id="map_area" style="display: none;" class="form-inline">
 				<input id="searchTextField" type="text" size="50">
 				<input type="radio" name="type" id="changetype-all" checked="checked">
 				<label for="changetype-all">All</label>
@@ -90,7 +91,7 @@
 		<%= f.hidden_field :user_id, :value => current_user.id %>
 		<%= f.hidden_field :complete, :value => false %>
 	</div>
-	<div class="field" id="reminder-area" style="display: none;">
+	<div class="field form-inline" id="reminder_area" style="display: none;">
 		<label>Set a reminder?</label>
 		<input type="checkbox" id="reminder"></input>
 		<div id="reminder_input" style="display: none;">
@@ -99,9 +100,7 @@
 	</div>
 
   <div class="actions">
-    <%= f.submit :value => "Remember!" %>
+    <%= f.submit :value => "Remember!", :class => "btn-primary" %>
   </div>
 <% end %>
-
-<%= link_to 'Back', thoughts_path %><br />
-<%= link_to 'Home', root_url %>
+</section>

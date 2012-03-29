@@ -4,7 +4,7 @@
 		</p>
 <% end %>
 
-<table>
+<table class="table table-striped">
 	<tr>
 		<th>Username</th>
 		<th>Email</th>
@@ -20,7 +20,7 @@
 		  		<% if current_user.friends?(user) %>
 					<%= render :partial => 'unfriend', :locals => { :user => @user} %>
 				<% elsif current_user.pending?(user) %>
-					<span>Pending acceptance from new friend...<%= time_ago_in_words(current_user.pending?(user).updated_at) %></span>
+					<span>Pending acceptance from new friend...<%= time_ago_in_words(current_user.pending?(user).updated_at) %> ago</span>
 				<% else %>
 					<%= render :partial => 'friend', :locals => { :user => @user} %>
 				<% end %>

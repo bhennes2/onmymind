@@ -40,6 +40,16 @@ class ThoughtsController < ApplicationController
 	end
 
 	def filter
+
+		# Thought counter
+		if current_user.admin?
+			@count = Thought.all.count
+			@count_incomplete = Thought.where(:complete => [nil, false]).count
+		else
+			@count = Thought.where(:user_id => current_user.id).count
+			@count_incomplete = Thought.where(:user_id => current_user.id, :complete => [nil, false]).count
+		end
+
 		if params[:type] == "timeframe"
 			@title = "Thoughts by timeframe"
 
@@ -57,9 +67,9 @@ class ThoughtsController < ApplicationController
 		elsif params[:type] == "tag"
 			@title = "Thoughts by tag"
 			if current_user.admin?
-				@thoughts = Thought.order("tag DESC")
+				@thoughts = Thought.select(:tag).uniq
 			else
-				@thoughts = Thought.order("tag DESC").where(:user_id => current_user.id)
+				@thoughts = Thought.where(:user_id => current_user.id).select(:tag).uniq
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"
@@ -73,7 +83,6 @@ class ThoughtsController < ApplicationController
 			@title = "Thoughts of your friends"
 			@thoughts = Thought.from_friends_of(current_user)
 		end
-
 	end
 
 	def vote

@@ -1,25 +1,37 @@
-<p>Help me to remember please...</p>
-
 <% if signed_in? %>
-	<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
-		<p><%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off" %>
-                   <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %><br />
-			<%= radio_button_tag 'type', "Idea" %><label>Idea</label>
-			<%= radio_button_tag 'type', "Tag" %><label>Tag</label>
-			<%= radio_button_tag 'type', "Date" %><label>Date</label>
-		</p>
-	<% end %>
-	<p> Nearby
-		<%= radio_button_tag 'distance', "0.1", :checked => true %><label>Here</label>
-		<%= radio_button_tag 'distance', "1" %><label>1 mi.</label>
-		<%= radio_button_tag 'distance', "5" %><label>5 mi.</label>
-		<%= radio_button_tag 'distance', "10" %><label>10 mi.</label>
-	: <span id="tags_nearby"></span></p>
-	<div id="search-results" style="display: none; "><%= render :partial => 'search' %></div>
-	<%= link_to "Sign out", signout_path, method: :delete %><br />
 
+	<section class="well form-search form-inline span10">
+
+		<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
+			<h2><%= @title2 %></h2>
+			<%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off", :class => "input-medium search-query" %>
+		        <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %>
+			<%= radio_button_tag 'type', "Idea" %><label class="radio">Idea</label>
+			<%= radio_button_tag 'type', "Tag" %><label class="radio">Tag</label>
+			<%= radio_button_tag 'type', "Date" %><label class="radio">Date</label>
+		<% end %>
+		<div id="search-results" style="display: none; ">
+			<%= render :partial => 'search' %>
+		</div>
+	</section>
+	<section class="span10 well form-inline">
+		<h3><%= @title3 %></h3>
+		<p> Distance:
+			<%= radio_button_tag 'distance', "0.1", :checked => true %><label class="radio">Here</label>
+			<%= radio_button_tag 'distance', "1" %><label class="radio">1 mi.</label>
+			<%= radio_button_tag 'distance', "5" %><label class="radio">5 mi.</label>
+			<%= radio_button_tag 'distance', "10" %><label class="radio">10 mi.</label>
+		</p>
+		<span id="tags_nearby"></span>
+	</section>
 <% else %>
-	<%= link_to 'Sign Up', signup_path %> | <%= link_to 'Sign in', signin_path %>
+	<!-- Main hero unit for a primary marketing message or call to action -->
+		<div class="hero-unit">
+        		<h1>Help me to remember please!</h1>
+		        <p>Have you ever had a thought pop into your head and just wanted to capture it in that moment before you stand up and forget what that brilliant idea was?&nbsp;OnMyMind helps you record these ideas and make sense of it all.</p>
+		        <p><a class="btn btn-primary btn-large" href="<%= signup_path %>"><i class="icon-pencil icon-white"></i> Sign Up &raquo;</a> - OR -
+			<a class="btn btn-success btn-large" href="<%= signin_path %>"><i class="icon-user icon-white"></i> Sign In &raquo;</a></p>
+		</div>
 <% end %>
 
 <script>
@@ -85,7 +97,7 @@
 			// Reformat tag if there is whitespace
 			tag_reformat = tag_coords[i].tag.replace(" ","%20");
 			if ( d <= radius * 1.6){
-				$('#tags_nearby').append('<a href=/tags?tag='+tag_reformat+'>'+tag_coords[i].tag+'</a> |');
+				$('#tags_nearby').append('<a href=/tags?tag='+tag_reformat+'>'+tag_coords[i].tag+'</a> | ');
 			}
 		}
 	};

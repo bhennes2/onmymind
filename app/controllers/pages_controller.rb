@@ -2,6 +2,8 @@ class PagesController < ApplicationController
 
 	def home
 		@title = "Home"
+		@title2 = "Easily find your thoughts"
+		@title3 = "See what's nearby you"
 		if !current_user.nil?
 			@users = User.where('id <> ? ', current_user.id)
 

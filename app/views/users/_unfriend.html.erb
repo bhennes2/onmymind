@@ -1,6 +1,6 @@
 <% if Relationship.where(:friend1_id => current_user.id, :friend2_id => @user.id ) != [] %>
 	<%= form_for(current_user.relationships.find_by_friend2_id(@user), html: { method: :delete}, remote: true) do |f| %>
-		<%= f.submit "Unfriend" %>
+		<%= f.submit "Unfriend", :class => "btn-danger" %>
 	<% end %>
 <% else %>
 	<%= render :partial => 'unfriend-reverse' %>

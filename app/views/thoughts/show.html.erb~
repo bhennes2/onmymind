@@ -1,68 +1,75 @@
-<p><strong>Completed? : </strong>
-	<% if @thought.complete != true %>
-		No
-	<% else %>
-		Yes
-	<% end %></p>
-<p><strong>ID : </strong><%= @thought.id %></p>
-<p><strong>Idea : </strong><%= @thought.idea %></p>
-<p><strong>Timeframe : </strong><%= @thought.timeframe %></p>
-<% if @thought.timeframe == "By Date" %>
-	<p><strong>Timeframe Date : </strong><%= @thought.timeframe_date %></p>
-<% elsif @thought.timeframe == "Every" %>
-	<p><strong>Frequency: </strong><%= @thought.timeframe_date.split(',')[0] %></p>
-	<p><strong>Starting on: </strong><%= @thought.timeframe_date.split(',')[1] %></p>
-<% end %>
-<p><strong>Tag : </strong><%= @thought.tag %></p>
-<% if @thought.note_image == "1" %>
-	<p><strong>Image : </strong><%= image_tag @thought.image_content %></p>
-<% end %>
-<% if @thought.note_location == "1" %>
-	<p><strong>Location : </strong></p>
-	<div id="map_canvas" style="width: 250px; height: 250px;"></div>
-	<script>
-	var myOptions = {
-        	center: new google.maps.LatLng(<%= @thought.location_content %>),
-        	zoom: 14,
-        	mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-	var map = new google.maps.Map(document.getElementById("map_canvas"),
-        	myOptions);
+<section class="well span10">
+	<div id="info" style="float: left;">
+		<p><strong>Completed? : </strong>
+			<% if @thought.complete != true %>
+				No
+			<% else %>
+				Yes
+			<% end %></p>
+		<p><strong>ID : </strong><%= @thought.id %></p>
+		<p><strong>Idea : </strong><%= @thought.idea %></p>
+		<p><strong>Timeframe : </strong><%= @thought.timeframe %></p>
+		<% if @thought.timeframe == "By Date" %>
+			<p><strong>Timeframe Date : </strong><%= @thought.timeframe_date %></p>
+		<% elsif @thought.timeframe == "Every" %>
+			<p><strong>Frequency: </strong><%= @thought.timeframe_date.split(',')[0] %></p>
+			<p><strong>Starting on: </strong><%= @thought.timeframe_date.split(',')[1] %></p>
+		<% end %>
+		<p><strong>Tag : </strong><%= @thought.tag %></p>
+		<% if @thought.note_image == "1" %>
+			<p><strong>Image : </strong><%= image_tag @thought.image_content %></p>
+		<% end %>
 
-	var marker = new google.maps.Marker({
-      			position: new google.maps.LatLng(<%= @thought.location_content %>),
-			map: map,
-			title:"<%= @thought.idea %>",
-			icon: "/assets/blue-dot.png",
-			options: { animation: google.maps.Animation.DROP }
-	});
-	var infowindow = new google.maps.InfoWindow({
-				content: "<p><%= @thought.tag %> | <%= @thought.idea %></p><p><%= @thought.created_at %></p>",
-	});
-	google.maps.event.addListener(marker, 'click', function() { infowindow.open(map,marker); });
-	</script>
-<% end %>
-<% if @thought.note_link == "1" %>
-	<p><strong>Link : </strong><%= link_to @thought.link_content, @thought.link_content %></p>
-<% end %>
-<% if @thought.note_email == "1" %>
-	<p><strong>Email : </strong><%= link_to @thought.email_content %></p>
-<% end %>
-<% if @thought.note_text == "1" %>
-	<p><strong>Text : </strong><%= link_to @thought.text_content %></p>
-<% end %>
+		<% if @thought.note_link == "1" %>
+			<p><strong>Link : </strong><%= link_to @thought.link_content, @thought.link_content %></p>
+		<% end %>
+		<% if @thought.note_email == "1" %>
+			<p><strong>Email : </strong><%= link_to @thought.email_content %></p>
+		<% end %>
+		<% if @thought.note_text == "1" %>
+			<p><strong>Text : </strong><%= link_to @thought.text_content %></p>
+		<% end %>
 
-<% if @thought.reminder_timeframe != "0" %>
-	<p><strong>You will be reminded : </strong><%= pluralize(@thought.reminder_timeframe, 'day') %>before due date</p>
-<% end %>
+		<% if @thought.reminder_timeframe != "0" %>
+			<p><strong>You will be reminded : </strong><%= pluralize(@thought.reminder_timeframe, 'day') %> before due date</p>
+		<% end %>
+	</div>
+	<% if @thought.note_location == "1" %>
+		<div id="map_canvas" style="width: 250px; height: 250px; float: right;"></div>
+		<script>
+		var myOptions = {
+			center: new google.maps.LatLng(<%= @thought.location_content %>),
+			zoom: 14,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("map_canvas"),
+			myOptions);
 
+		var marker = new google.maps.Marker({
+	      			position: new google.maps.LatLng(<%= @thought.location_content %>),
+				map: map,
+				title:"<%= @thought.idea %>",
+				icon: "/assets/blue-dot.png",
+				options: { animation: google.maps.Animation.DROP }
+		});
+		var infowindow = new google.maps.InfoWindow({
+					content: "<p><%= @thought.tag %> | <%= @thought.idea %></p><p><%= @thought.created_at %></p>",
+		});
+		google.maps.event.addListener(marker, 'click', function() { infowindow.open(map,marker); });
+		</script>
+	<% end %>
+</section>
 <% if current_user.id != @thought.user_id %>
-<div id="commenting">
-	<%= render :partial => 'commenting' %>
-</div><!-- commenting -->
-<div id="voting_info">
-	<%= render :partial => 'voting' %>
-</div><!-- voting -->
+	<section class="well span10">
+		<div id="voting_info">
+			<%= render :partial => 'voting' %>
+		</div><!-- voting -->
+	</section>
+	<section class="well span10">
+		<div id="commenting">
+			<%= render :partial => 'commenting' %>
+		</div><!-- commenting -->
+	</section>
 <% end %>
 
 <%= link_to 'Edit', edit_thought_path(@thought) %><br />
