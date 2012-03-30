@@ -67,9 +67,9 @@ class ThoughtsController < ApplicationController
 		elsif params[:type] == "tag"
 			@title = "Thoughts by tag"
 			if current_user.admin?
-				@thoughts = Thought.select("DISTINCT tag")
+				@thoughts = Thought.select("DISTINCT(tag)").order("created_at DESC")
 			else
-				@thoughts = Thought.where(:user_id => current_user.id).select("DISTINCT tag")
+				@thoughts = Thought.where(:user_id => current_user.id).select("DISTINCT(tag)").order("created_at DESC")
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"
