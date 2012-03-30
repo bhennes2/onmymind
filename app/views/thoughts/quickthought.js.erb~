@@ -1,0 +1,2 @@
+$("#close").trigger('click');
+doucument.write('hello');

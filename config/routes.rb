@@ -19,7 +19,6 @@ Onmymind::Application.routes.draw do
 	match '/completed' => 'thoughts#completed'
 	match '/tags' => 'pages#tags'
 	match '/dates' => 'pages#dates'
-	match '/quicktag' => 'thoughts#quicktag'
 
 	match '/voting' => 'thoughts#vote'
 	match '/commenting' => 'thoughts#comment'

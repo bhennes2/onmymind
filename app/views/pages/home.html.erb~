@@ -1,4 +1,11 @@
 <% if signed_in? %>
+	<section class="well span10">
+		<h3>Quick thoughts:
+			<% @thoughts_recent.each do |thought| %>
+				<a id="<%= thought.id %>" class="btn btn-primary quickthought" data-toggle="modal" href="#myModal" ><%= thought.tag %></a>
+			<% end %>
+		</h3>
+	</section>
 
 	<section class="well form-search form-inline span10">
 
@@ -24,17 +31,22 @@
 		</p>
 		<span id="tags_nearby"></span>
 	</section>
+
+	<!-- Render modal -->
+	<%= render :partial => 'thought_modal' %>
+
 <% else %>
 	<!-- Main hero unit for a primary marketing message or call to action -->
 		<div class="hero-unit">
         		<h1>Help me to remember please!</h1>
 		        <p>Have you ever had a thought pop into your head and just wanted to capture it in that moment before you stand up and forget what that brilliant idea was?&nbsp;OnMyMind helps you record these ideas and make sense of it all.</p>
 		        <p><a class="btn btn-primary btn-large" href="<%= signup_path %>"><i class="icon-pencil icon-white"></i> Sign Up &raquo;</a> - OR -
-			<a class="btn btn-success btn-large" href="<%= signin_path %>">Sign In &raquo;</a></p>
+			<a class="btn btn-success btn-large" href="<%= signin_path %>"><i class="icon-user icon-white"></i> Sign In &raquo;</a></p>
 		</div>
 <% end %>
 
 <script>
+
 	$('input[name=distance]:radio').click(function(){
 		$('#tags_nearby').html('');
 		update_nearby($('input[name=distance]:radio:checked').val());

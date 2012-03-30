@@ -1,4 +1,11 @@
 <% if signed_in? %>
+	<section id="notice_area" class="well span10">
+		<h3>Quick thoughts:
+			<% @thoughts_recent.each do |thought| %>
+				<a id="<%= thought.id %>" class="btn btn-primary quickthought" data-toggle="modal" href="#myModal" ><%= thought.tag %></a>
+			<% end %>
+		</h3>
+	</section>
 
 	<section class="well form-search form-inline span10">
 
@@ -24,6 +31,10 @@
 		</p>
 		<span id="tags_nearby"></span>
 	</section>
+
+	<!-- Render modal -->
+	<%= render :partial => 'thought_modal' %>
+
 <% else %>
 	<!-- Main hero unit for a primary marketing message or call to action -->
 		<div class="hero-unit">
@@ -35,6 +46,7 @@
 <% end %>
 
 <script>
+
 	$('input[name=distance]:radio').click(function(){
 		$('#tags_nearby').html('');
 		update_nearby($('input[name=distance]:radio:checked').val());

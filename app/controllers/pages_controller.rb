@@ -9,8 +9,10 @@ class PagesController < ApplicationController
 
 			if current_user.admin?
 				@thoughts_nearby = Thought.where(:note_location => "1")
+				@thoughts_recent = Thought.order("created_at DESC").group("tag").limit(6)
 			else
 				@thoughts_nearby = Thought.where(:user_id => current_user, :note_location => "1")
+				@thoughts_recent = Thought.where(:user_id => current_user).order("created_at DESC").group("tag").limit(6)
 			end
 		end
 	end

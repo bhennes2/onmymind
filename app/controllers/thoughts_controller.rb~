@@ -102,10 +102,6 @@ class ThoughtsController < ApplicationController
 		@root_comments = @thought.root_comments.order("comments.created_at DESC")
 	end
 
-	def quicktag
-		@thought = Thought.find(params[:id])
-	end
-
 	def completed
 		@thought = Thought.find(params[:id])
 		@thought.complete = params[:value]
@@ -181,14 +177,46 @@ class ThoughtsController < ApplicationController
 	def create
 		@thought = Thought.new(params[:thought])
 
-		respond_to do |format|
-			if @thought.save
+		if params[:type] == "quickthought"
+			@thought_old = Thought.find(params[:id])
+
+
+			@thought.update_attributes({
+				:idea => params[:idea],
+				:timeframe => @thought_old.timeframe,
+				:timeframe_date => @thought_old.timeframe_date,
+				:tag => @thought_old.tag,
+				:note_image => @thought_old.note_image,
+				:image_content => @thought_old.image_content,
+				:user_id => current_user.id,
+				:note_location => @thought_old.note_location,
+				:note_link => @thought_old.note_link,
+				:note_email => @thought_old.note_email,
+				:note_text => @thought_old.note_text,
+				:location_content => @thought_old.location_content,
+				:link_content => @thought_old.link_content,
+				:email_content => @thought_old.email_content,
+				:text_content => @thought_old.text_content,
+				:complete => false,
+				:reminder_timeframe => @thought_old.reminder_timeframe
+			})
+
+			respond_to do |format|
 	  			format.html { redirect_to(thoughts_path, :notice => 'Thought was successfully created.') }
-			        #format.html { redirect_to(@thought, :notice => 'Thought was successfully created.') }
-			        format.xml  { render :xml => @thought, :status => :created, :location => @thought }
-			else
-			        format.html { render :action => "new" }
-			        format.xml  { render :xml => @thought.errors, :status => :unprocessable_entity }
+				#format.html { redirect_to(@thought, :notice => 'Thought was successfully created.') }
+				format.xml  { render :xml => @thought, :status => :created, :location => @thought }
+
+			end
+		else
+			respond_to do |format|
+				if @thought.save
+		  			format.html { redirect_to(thoughts_path, :notice => 'Thought was successfully created.') }
+					#format.html { redirect_to(@thought, :notice => 'Thought was successfully created.') }
+					format.xml  { render :xml => @thought, :status => :created, :location => @thought }
+				else
+					format.html { render :action => "new" }
+					format.xml  { render :xml => @thought.errors, :status => :unprocessable_entity }
+				end
 			end
 		end
 	end
