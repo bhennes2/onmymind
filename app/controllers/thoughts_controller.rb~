@@ -67,7 +67,7 @@ class ThoughtsController < ApplicationController
 		elsif params[:type] == "tag"
 			@title = "Thoughts by tag"
 			if current_user.admin?
-				@thoughts = Thought.select(:tag).uniq
+				@thoughts = Thought.select("DISTINCT tag")
 			else
 				@thoughts = Thought.where(:user_id => current_user.id).select(:tag).uniq
 			end
@@ -82,10 +82,6 @@ class ThoughtsController < ApplicationController
 		elsif params[:type] == "friends"
 			@title = "Thoughts of your friends"
 			@thoughts = Thought.from_friends_of(current_user)
-		end
-
-		respond_to do |format|
-			format.html
 		end
 	end
 
