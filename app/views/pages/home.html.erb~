@@ -1,5 +1,9 @@
 <% if signed_in? %>
-	<section class="well span10">
+	<section class="well span10 form-inline">
+		<%= render :partial => "thought_tweet" %>
+	</section>
+
+	<section id="notice_area" class="well span10">
 		<h3>Quick thoughts:
 			<% @thoughts_recent.each do |thought| %>
 				<a id="<%= thought.id %>" class="btn btn-primary quickthought" data-toggle="modal" href="#myModal" ><%= thought.tag %></a>
@@ -77,6 +81,9 @@
 	});
 
 	var radius = 0.1;
+	var latitude;
+	var longitude;
+
 	function getLocation(position) {
 
 		var tag_coords = [

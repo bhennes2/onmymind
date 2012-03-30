@@ -1,0 +1,85 @@
+	<div class="visual_search span8"></div>
+	<a id="quick_remember" class="btn btn-success">Remember</a>
+	<input type="hidden" id="position_holder" />
+<script>
+		navigator.geolocation.getCurrentPosition(here);
+		$("#quick_remember").click(function(){
+			var query = visualSearch.searchQuery.facets();
+			var text = query[3].text;
+
+			if (query[0].location == "Here"){
+				// One-shot position request.
+				var location = $("#position_holder").val();
+			}
+			var tag = query[2].tag;
+			var timeframe = query[1].timeframe;
+
+			$.post('/thoughts', { type: "unique_thought", idea: text, location: location, tag: tag, timeframe: timeframe }, null, 'script')
+			.error(function() { alert('Cannot save thought!'); });
+			return true;
+		});
+
+		function here(position){
+			$("#position_holder").val(position.coords.latitude+","+position.coords.longitude);
+		};
+
+		var visualSearch;
+		$(document).ready(function() {
+        		visualSearch = VS.init({
+			  container  : $('.visual_search'),
+			  query      : 'Type in your thought here...',
+			  unquotable : [
+			    'location', 'tag', 'timeframe', 'text'
+			  ],
+          callbacks  : {
+            search : function(query, searchCollection) {
+              var $query = $('#search_query');
+              var count  = searchCollection.size();
+              $query.stop().animate({opacity : 1}, {duration: 300, queue: false});
+              $query.html('<span class="raquo">&raquo;</span> You searched for: ' +
+                          '<b>' + (query || '<i>nothing</i>') + '</b>. ' +
+                          '(' + count + ' facet' + (count==1 ? '' : 's') + ')');
+              clearTimeout(window.queryHideDelay);
+              window.queryHideDelay = setTimeout(function() {
+                $query.animate({
+                  opacity : 0
+                }, {
+                  duration: 1000,
+                  queue: false
+                });
+              }, 2000);
+            },
+            facetMatches : function(callback) {
+              callback([
+                'location', 'tag', 'timeframe', 'text'
+              ]);
+            },
+            valueMatches : function(facet, searchTerm, callback) {
+              switch (facet) {
+              case 'location':
+                  callback([
+                     'Here'
+                  ]);
+                  break;
+                case 'tag':
+                  callback([
+			<% @tags.each do |tag| %>
+	                    '<%= tag.tag %>'
+			    <% if tag != @tags.last %>,<% end %>
+			<% end %>
+                  ]);
+                  break;
+                case 'timeframe':
+                  callback([
+                    'Soon',
+                    'Someday',
+                    'By Date',
+                    'Every'
+                  ]);
+                  break;
+              }
+            }
+          }
+        });
+      });
+</script>

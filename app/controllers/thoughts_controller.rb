@@ -119,6 +119,10 @@ class ThoughtsController < ApplicationController
 		end
 	end
 
+	def searching
+		@tags = Thought.where(:tag => params[:q])
+	end
+
   	# GET /thoughts/1
   	# GET /thoughts/1.xml
   	def show
@@ -200,6 +204,17 @@ class ThoughtsController < ApplicationController
 				:complete => false,
 				:reminder_timeframe => @thought_old.reminder_timeframe
 			})
+		elsif params[:type] == "unique_thought"
+			@thought.update_attributes({
+				:idea => params[:idea],
+				:timeframe => params[:timeframe],
+				:tag => params[:tag],
+				:user_id => current_user.id,
+				:note_location => 1,
+				:location_content => params[:location],
+				:complete => false
+			})
+
 		else
 			respond_to do |format|
 				if @thought.save
