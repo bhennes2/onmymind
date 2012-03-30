@@ -81,8 +81,6 @@
 	});
 
 	var radius = 0.1;
-	var latitude;
-	var longitude;
 
 	function getLocation(position) {
 
