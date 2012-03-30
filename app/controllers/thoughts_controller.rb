@@ -67,9 +67,9 @@ class ThoughtsController < ApplicationController
 		elsif params[:type] == "tag"
 			@title = "Thoughts by tag"
 			if current_user.admin?
-				@thoughts = Thought.select(:tag)
+				@thoughts = Thought.select(:tag).uniq.order("tag DESC")
 			else
-				@thoughts = Thought.where(:user_id => current_user.id).select(:tag)
+				@thoughts = Thought.where(:user_id => current_user.id).select(:tag).uniq.order("tag DESC")
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"
