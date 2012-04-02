@@ -1,6 +1,7 @@
 <% if signed_in? %>
 	<section class="well span10 form-inline">
 		<%= render :partial => "thought_tweet" %>
+		<textarea>Type your idea here</textarea>
 	</section>
 
 	<section id="notice_area" class="well span10">

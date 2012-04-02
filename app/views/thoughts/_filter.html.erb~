@@ -36,7 +36,7 @@
 		<% @thoughts.each do |thought| %>
 			<% if thought.tag != "" %>
 				<% weight = @count_tag[thought.tag] %>
-				<% size = 9 * weight %>
+				<% size = 10 * weight %>
 				<li><a style="font-size: <%= size %>px;" href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></li>
 			<% end %>
 		<% end %>

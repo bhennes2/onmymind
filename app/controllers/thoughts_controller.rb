@@ -24,6 +24,8 @@ class ThoughtsController < ApplicationController
 				@thoughts = Thought.where(:complete => [nil, false])
 			elsif params[:type] == "Completed"
 				@thoughts = Thought.where(:complete => true)
+			elsif params[:type] == "All"
+				@thoughts = Thought.all
 			else
 				@thoughts = Thought.all
 			end
@@ -32,6 +34,8 @@ class ThoughtsController < ApplicationController
 				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id)
 			elsif params[:type] == "Completed"
 				@thoughts = Thought.where(:complete => true, :user_id => current_user.id)
+			elsif params[:type] == "All"
+				@thoughts = Thought.where(:user_id => current_user.id)
 			else
 				@thoughts = Thought.where(:user_id => current_user.id)
 			end
@@ -68,16 +72,18 @@ class ThoughtsController < ApplicationController
 			@title = "Thoughts by tag"
 			if current_user.admin?
 				@thoughts = Thought.select("tag").group("tag").reorder("tag DESC")
+				@count_tag = Thought.group("tag").count
 			else
 				@thoughts = Thought.where(:user_id => current_user.id).select("tag").group("tag").reorder("tag DESC")
+				@count_tag = Thought.where(:user_id => current_user.id).group("tag").count
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"
 
 			if current_user.admin?
-				@thoughts = Thought.where(:note_location => "1")
+				@thoughts = Thought.where(:note_location => "1").reorder("tag ASC")
 			else
-				@thoughts = Thought.where(:note_location => "1", :user_id => current_user.id)
+				@thoughts = Thought.where(:note_location => "1", :user_id => current_user.id).reorder("tag ASC")
 			end
 		elsif params[:type] == "friends"
 			@title = "Thoughts of your friends"

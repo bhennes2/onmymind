@@ -1,14 +1,3 @@
-<% if @count != 0 %>
-	<p class="well span10">
-		View by: <a id="timeframe" class="view">Timeframe</a> |
-		<a id="tag" class="view">Tag</a> |
-		<a id="location" class="view">Location</a>
-		<% if current_user.friends != [] || current_user.reverse_friends != [] %>
-		| <a id="friends">Friends(<%= current_user.friends.count + current_user.reverse_friends.count %>)</a>
-<% end %>
-</p>
-<% end %>
-
 <div id="results">
 	<%= render :partial => 'results' %>
 </div>

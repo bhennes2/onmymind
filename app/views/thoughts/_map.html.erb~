@@ -1,33 +1,67 @@
 <p>Display <strong><%= @thoughts.count %></strong> ideas on the map near you! (blue marker)</p>
-	<p>Filter by: <a onclick="filter_map('all');">All</a> |
-	<% if !@thoughts.nil? %>
-		<% flag = "" %>
-		<% counter = 0 %>
-		<% @thoughts.each_cons(2) do |thought, next_thought| %>
-			<% if flag != thought.tag %>
-				<a id="<%= thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= thought.tag %></a> |
-			<% end %>
-			<% flag = thought.tag %>
-			<% counter += 1 %>
-			<% if counter == (@thoughts.size - 1) %>
-				<% if next_thought.tag != thought.tag %>
-					<a id="<%= next_thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= next_thought.tag %></a>
+	<div class="accordion span2" id="accordion2">
+		<div class="accordion-group span2">
+			<div class="accordion-heading span2">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" onclick="filter_map('all');">All</a>
+			</div>
+		</div>
+		<% if !@thoughts.nil? %>
+			<% flag = "" %>
+			<% counter = 0 %>
+			<% @thoughts.each_cons(2) do |thought, next_thought| %>
+				<% if flag != thought.tag %>
+					<div class="accordion-group span2">
+						<div class="accordion-heading span2">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="<%= thought.tag %>" onclick="filter_map($(this).attr('id'));" href="#collapse-<%= thought.tag %>"><%= thought.tag %></a>
+						</div>
+					<div id="collapse-<%= thought.tag %>" class="accordion-body collapse span2">
+						<div class="accordion-inner span2">
 				<% end %>
-			<% end %>
+								<a onclick="show_marker(<%= thought.id %>);"><%= thought.idea %></a><a href="/thoughts/<%= thought.id %>"> <i class="icon-book"></i></a><br />
+				<% flag = thought.tag %>
+				<% if next_thought.tag != thought.tag %>
+						</div>
+					</div>
+					</div>
 
+				<% end %>
+				<% counter += 1 %>
+				<% if counter == (@thoughts.size - 1) %>
+					<% if next_thought.tag != thought.tag %>
+						<div class="accordion-group span2">
+							<div class="accordion-heading span2">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="<%= next_thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= next_thought.tag %></a>
+							</div>
+							<div id="collapse-<%= next_thought.tag %>" class="accordion-body collapse span2">
+								<div class="accordion-inner span2">
+									<a onclick="show_marker(<%= next_thought.id %>);"><%= next_thought.idea %></a><a href="/thoughts/<%= next_thought.id %>"> <i class="icon-book"></i></a><br />
+								</div>
+							</div>
+						</div>
+					<% end %>
+				<% end %>
+
+			<% end %>
 		<% end %>
-	<% end %>
-	</p>
+
+	</div>
 	<div class="span1">&nbsp;</div>
+
 	<div id="map_canvas" style="width: 500px; height: 500px;"></div><br />
 
 	<script>
+
+
+		var open_infowindow = -1;
 		navigator.geolocation.getCurrentPosition(showMap, error, { enableHighAccuracy: true, requestAddress: true});
+		var marker = [];
+		var map;
+		var infowindow = [];
+		var counter = 0;
 
 		function showMap(position) {
 
-			var marker = [];
-			var map;
+
 
 
 			// Show a map centered at (position.coords.latitude, position.coords.longitude).
@@ -50,27 +84,33 @@
 				options: { visible: true }
 			});
 
-			var infowindow = [];
-			var counter = 0;
+
 			<% if @thoughts != [] && params[:type] == "location" %>
 				<% @thoughts.each do |thought| %>
 					marker[counter] = new google.maps.Marker({
 						position: new google.maps.LatLng(<%= thought.location_content %>),
 						map: map,
-						title: "<%= thought.tag %>",
+						title: "<%= thought.id %>:<%= thought.tag %>",
 						options: { animation: google.maps.Animation.DROP, zIndex: counter, visible: true }
 					});
 					infowindow[counter] = new google.maps.InfoWindow({
-						content: "<p><%= thought.tag %> | <%= thought.idea %></p><p><%= thought.created_at %></p>",
+						content: "<p><%= thought.tag %> | <a href='/thoughts/<%= thought.id %>'><%= thought.idea %></a></p><p><%= thought.created_at %></p>",
 						zIndex: counter
 					});
 					google.maps.event.addListener(marker[counter], 'click', function() {
 						infowindow[this.zIndex].open(map,this);
+						if (open_infowindow == -1){
+							open_infowindow = this.zIndex;
+						}
+						else {
+							infowindow[open_infowindow].close();
+							open_infowindow = this.zIndex;
+						}
 					});
 					counter++;
 				<% end %>
 			<% end %>
-			//google.maps.event.trigger(map, "resize");
+
 		}
 
 		function error(position) {
@@ -78,12 +118,32 @@
 		}
 		function filter_map(tag){
 			for (var i=0; i < marker.length; i++){
-				if (marker[i].getTitle() == tag || tag == "all"){
+				var value = marker[i].getTitle().split(":")[1];
+				if (value == tag || tag == "all"){
 					marker[i].setVisible(true);
 				}
 				else
 					marker[i].setVisible(false);
+			}
+			if (open_infowindow != -1){
+				infowindow[open_infowindow].close();
+			}
 		}
-	}
+		function show_marker(id){
+			for (var i=0; i < marker.length; i++){
+				var value = marker[i].getTitle().split(":")[0];
+				if (value == id){
+					var ctr = i;
+					break;
+				}
+			}
+			infowindow[ctr].open(map,marker[ctr]);
+			if (open_infowindow == -1){
+				open_infowindow = ctr;
+			}
+			else {
+				infowindow[open_infowindow].close();
+			}
+		}
 
 	</script>

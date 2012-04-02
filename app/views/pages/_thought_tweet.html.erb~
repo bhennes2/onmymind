@@ -1,9 +1,94 @@
-	<div class="visual_search span8"></div>
+	<textarea id="input_thought"></textarea>
+	<!--<div class="visual_search span8"></div>-->
 	<a id="quick_remember" class="btn btn-success">Remember</a>
-	<input type="hidden" id="position_holder" />
+	<div id="locations">
+		<input type="hidden" id="position_holder" />
+	</div>
+
 <script>
+
+		$("#input_thought").keyup(function(){
+			var str = $("#input_thought").val();
+			var last = str.charAt(str.length - 1);
+			if (last == "@"){
+				/*var position = $("#position_holder").position();
+				position = [position.left, position.top];
+				$("#locations").dialog( {position: position, closeText: "" });*/
+
+				var locations = ["@near", "@far", "@wherever"];
+				function split( val ) {
+					return val.split( /,\s*/ );
+				}
+				function extractLast( term ) {
+					return split( term ).pop();
+				}
+				$("#input_thought")
+					.autocomplete({
+						minLength: 0,
+						source: locations,
+						focus: function() {
+							// prevent value inserted on focus
+							return false;
+						},
+						select: function( event, ui ) {
+							var terms = split( this.value );
+							// remove the current input
+							terms.pop();
+							// add the selected item
+							terms.push( ui.item.value );
+							// add placeholder to get the comma-and-space at the end
+							terms.push( "" );
+							this.value = terms.join( ", " );
+							return false;
+						}
+					});
+			}
+			if (last == "#"){
+				/*var position = $("#position_holder").position();
+				position = [position.left, position.top];
+				$("#locations").dialog( {position: position, closeText: "" });*/
+
+				var locations = ["#near", "#far", "#wherever"];
+				function split( val ) {
+					return val.split( /,\s*/ );
+				}
+				function extractLast( term ) {
+					return split( term ).pop();
+				}
+				$("#input_thought")
+					.autocomplete({
+						minLength: 0,
+						source: locations,
+						focus: function() {
+							// prevent value inserted on focus
+							return false;
+						},
+						select: function( event, ui ) {
+							var terms = split( this.value );
+							// remove the current input
+							terms.pop();
+							// add the selected item
+							terms.push( ui.item.value );
+							// add placeholder to get the comma-and-space at the end
+							terms.push( "" );
+							this.value = terms.join( ", " );
+							return false;
+						}
+					});
+			}
+
+		});
+		/*
+		$("#location_input").autocomplete({
+			select: function(event, ui){
+				var current = $("#input_thought").val();
+				$("#input_thought").val(current + ui.item.value);
+				$("#locations").dialog("close");
+				$("#input_thought").focus();
+			}
+		});*/
 		navigator.geolocation.getCurrentPosition(here);
-		$("#quick_remember").click(function(){
+		/*$("#quick_remember").click(function(){
 			var query = visualSearch.searchQuery.facets();
 			var text = query[3].text;
 
@@ -14,18 +99,16 @@
 			var tag = query[2].tag;
 			var timeframe = query[1].timeframe;
 
-			document.write(tag);
-
-			/*$.post('/thoughts', { type: "unique_thought", idea: idea, location: location, tag: tag, timeframe: timeframe }, null, 'script')
+			$.post('/thoughts', { type: "unique_thought", idea: text, location: location, tag: tag, timeframe: timeframe }, null, 'script')
 			.error(function() { alert('Cannot save thought!'); });
-			return true;*/
-		});
+			return true;
+		});*/
 
 		function here(position){
 			$("#position_holder").val(position.coords.latitude+","+position.coords.longitude);
 		};
 
-		var visualSearch;
+		/*var visualSearch;
 		$(document).ready(function() {
         		visualSearch = VS.init({
 			  container  : $('.visual_search'),
@@ -83,5 +166,5 @@
             }
           }
         });
-      });
+      });*/
 </script>

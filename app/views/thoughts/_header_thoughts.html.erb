@@ -1,0 +1,30 @@
+<% if @count != 0 %>
+	<ul class="nav nav-pills">
+		<% if @thoughts != [] %>
+			<li class="<%= 'active' if params[:type] == 'All' || params[:type].nil? %>"><a id="All" class="completion">All  (<%= @count %>)</a></li>
+			<li class="<%= 'active' if params[:type] == 'Completed' %>"><a id="Completed" class="completion">Completed  (<%= @count - @count_incomplete %>)</a></li>
+			<li class="<%= 'active' if params[:type] == 'Incomplete' %>"><a id="Incomplete" class="completion">Incomplete  (<%= @count_incomplete %>)</a></li>
+		<% end %>
+		<li class="<%= 'active' if params[:type] == 'timeframe' %>"><a id="timeframe" class="view">Timeframe</a></li>
+		<li class="<%= 'active' if params[:type] == 'tag' %>"><a id="tag" class="view">Tag</a></li>
+		<li class="<%= 'active' if params[:type] == 'location' %>"><a id="location" class="view">Location</a></li>
+		<% if current_user.friends != [] || current_user.reverse_friends != [] %>
+			<li class="<%= 'active' if params[:type] == 'friends' %>"><a id="friends" class="view">Friends(<%= current_user.friends.count + current_user.reverse_friends.count %>)</a></li>
+		<% end %>
+	</ul>
+<% end %>
+
+<% if @thoughts == [] %>
+	<p>No thoughts yet....make one <%= link_to 'here', new_thought_path %></p>
+<% end %>
+
+<script>
+	$('a.completion').click(function(){
+		$.get("/thoughts", { type: $(this).attr('id') }, null, 'script');
+		return false;
+	});
+	$('a.view').click(function(){
+		$.get("/filter", { type: $(this).attr('id') }, null, 'script');
+		return false;
+	});
+</script>

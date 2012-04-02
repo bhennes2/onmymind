@@ -1,0 +1,160 @@
+	<script>
+		$(function() {
+			$("#slider").slider({
+				min: 1,
+				max: 4,
+				range: 'min',
+				animate: true,
+				create: function(event, ui){
+					$("#soon").addClass('active');
+				},
+				slide: function(event, ui){
+					var val = ui.value;
+					$(".timeframe_type_li").removeClass('active');
+
+					if (val == "2"){
+						$("#results_timeframe").children().hide();
+						$("#list_by_date").show();
+						$("#by_date").addClass('active');
+					}
+
+					else if (val == 3){
+						$("#results_timeframe").children().hide();
+						$("#list_every").show();
+						$("#every").addClass('active');
+					}
+					else if (val == 4){
+						$("#results_timeframe").children().hide();
+						$("#list_someday").show();
+						$("#someday").addClass('active');
+					}
+					else {
+						$("#results_timeframe").children().hide();
+						$("#list_soon").show();
+						$("#soon").addClass('active');
+					}
+				}
+
+			});
+		});
+
+		$(".timeframe_type").click(function(){
+			$("#results_timeframe").children().hide();
+			$(".timeframe_type_li").removeClass('active');
+			var val = $(this).attr('id');
+			if (val == "title_soon"){
+				$("#list_soon").show();
+				$("#soon").addClass('active');
+				$("#slider").slider("value", 1);
+			}
+			else if (val == "title_by_date"){
+				$("#list_by_date").show();
+				$("#by_date").addClass('active');
+				$("#slider").slider("value", 2);
+			}
+			else if (val == "title_every"){
+				$("#list_every").show();
+				$("#every").addClass('active');
+				$("#slider").slider("value", 3);
+			}
+			else if (val == "title_someday"){
+				$("#list_someday").show();
+				$("#someday").addClass('active');
+				$("#slider").slider("value", 4);
+			}
+		});
+
+	</script>
+
+	<ul class="nav nav-pills">
+		<li id="soon" class="timeframe_type_li"><a id="title_soon" class="timeframe_type">Soon (<%= @thoughts_soon.count %>)</a></li>
+		<li class="span2">&nbsp;</li>
+		<li id="by_date" class="timeframe_type_li"><a id="title_by_date" class="timeframe_type">By Date (<%= @thoughts_by_date.count %>)</a></li>
+		<li class="span3">&nbsp;</li>
+		<li id="every" class="timeframe_type_li"><a id="title_every" class="timeframe_type">Every (<%= @thoughts_every.count %>)</a></li>
+		<li class="span2">&nbsp;</li>
+		<li id="someday" class="timeframe_type_li"><a id="title_someday" class="timeframe_type">Someday (<%= @thoughts_someday.count %>)</a></li>
+	</ul>
+	<div id="slider"></div>
+
+	<div id="results_timeframe">
+		<% if @thoughts_soon.count != 0 %>
+			<table id="list_soon" class="table table-striped">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_soon.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_someday.count != 0 %>
+			<table id="list_someday" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_someday.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_by_date.count != 0 %>
+			<table id="list_by_date" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Timeframe Date</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_by_date.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<td><a href="/dates?date=<%= thought.timeframe_date %>"><%= thought.timeframe_date %></a></td>
+					<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+		<% if @thoughts_every.count != 0 %>
+			<table id="list_every" class="table table-striped" style="display: none;">
+				<thead>
+					<tr>
+						<th>Idea</th>
+						<th>Frequency</th>
+						<th>Due Date</th>
+						<th>Tag</th>
+						<th>View</th>
+					</tr>
+				</thead>
+			<% @thoughts_every.each do |thought| %>
+				<tr>
+					<td><%= thought.idea %></td>
+					<% reminder = thought.timeframe_date.split(",") %>
+					<td><%= reminder[0] %></td>
+					<td><a href="/dates?date=<%= reminder[1] %>"><%= reminder[1] %></a></td>
+					<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+					<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+				</tr>
+			<% end %>
+			</table>
+		<% end %>
+	</div>

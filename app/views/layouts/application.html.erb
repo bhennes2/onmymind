@@ -3,6 +3,8 @@
 <head>
 	<title><%= @title %></title>
 	<%= stylesheet_link_tag    "application", :media => "all" %>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="http://static.jquery.com/ui/css/demo-docs-theme/ui.theme.css" type="text/css" media="all" />
 	<!--<link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection">
 	<link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print">
 	<!--[if lt IE 8]>
@@ -16,7 +18,6 @@
 
 	<%= javascript_include_tag "application", :media => "all" %>
 	<%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js' %>
-	<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDNTgdz8LHOUFC4eTssPHmMD02N_NnQ5Xk&sensor=false"></script>-->
 	<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
 	<%= csrf_meta_tags %>
 </head>

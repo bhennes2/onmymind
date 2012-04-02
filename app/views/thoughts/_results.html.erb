@@ -1,23 +1,7 @@
-<% if @thoughts == [] %>
-	<p>No thoughts yet....make one <%= link_to 'here', new_thought_path %></p>
-<% else %>
-	<% if params[:type] != "friends" %>
-		<h1><%= @title %></h1>
-	<% end %>
-		<p class="well span10">
-		<% if params[:type] == "Completed"%>
-			<strong>Showing: </strong><a class="completion">Completed</a> (<%= @count - @count_incomplete %>) <br />
-			<strong>Filter by: </strong> <a class="completion">All</a> (<%= @count %>) | <a class="completion">Incomplete</a>  (<%= @count_incomplete %>)
-		<% elsif params[:type] == "Incomplete"%>
-			<strong>Showing: </strong><a class="completion">Incomplete</a> (<%= @count_incomplete %>) <br />
-			<strong>Filter by: </strong> <a class="completion">All</a> (<%= @count %>) | <a class="completion">Complete</a>  (<%= @count - @count_incomplete %>)
-		<% else %>
-			<strong>Showing: </strong><a class="completion">All</a> (<%= @count %>) <br />
-			<strong>Filter by: </strong><a class="completion">Completed</a> (<%= @count - @count_incomplete %>) | <a class="completion">Incomplete</a> (<%= @count_incomplete %>)
-		<% end %>
-		</p>
-
-
+<% if params[:type] != "friends" %>
+	<%= render :partial => 'header_thoughts' %>
+<% end %>
+<% if @thoughts != [] %>
 	<table class="table table-striped">
 		<thead>
 		<tr>
@@ -57,8 +41,10 @@
 <% end %>
 
 <script>
-	$('a.completion').click(function(){
-		$.get("/thoughts", { type: $(this).text() }, null, 'script');
+	$('.checkbox').change(function(){
+		alert("Mark this complete?");
+		$.post("/completed", { id: $(this).attr('id'), value: true }, alert("Completed!"), 'script');
 		return false;
 	});
+
 </script>
