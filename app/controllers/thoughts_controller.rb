@@ -72,10 +72,10 @@ class ThoughtsController < ApplicationController
 			@title = "Thoughts by tag"
 			if current_user.admin?
 				@thoughts = Thought.select("tag").group("tag").reorder("tag DESC")
-				@count_tag = Thought.order("tag DESC").group("tag").count
+				@count_tag = Thought.reorder("tag DESC").group("tag").count
 			else
 				@thoughts = Thought.where(:user_id => current_user.id).select("tag").group("tag").reorder("tag DESC")
-				@count_tag = Thought.where(:user_id => current_user.id).order("tag DESC").group("tag").count
+				@count_tag = Thought.where(:user_id => current_user.id).reorder("tag DESC").group("tag").count
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"
