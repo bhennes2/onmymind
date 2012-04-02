@@ -30,7 +30,7 @@
 					<% if next_thought.tag != thought.tag %>
 						<div class="accordion-group span2">
 							<div class="accordion-heading span2">
-								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="<%= next_thought.tag %>" onclick="filter_map($(this).attr('id'));"><%= next_thought.tag %></a>
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="<%= next_thought.tag %>" onclick="filter_map($(this).attr('id'));" href="#collapse-<%= next_thought.tag %>"><%= next_thought.tag %></a>
 							</div>
 							<div id="collapse-<%= next_thought.tag %>" class="accordion-body collapse span2">
 								<div class="accordion-inner span2">

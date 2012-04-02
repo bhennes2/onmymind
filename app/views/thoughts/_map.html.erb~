@@ -143,6 +143,7 @@
 			}
 			else {
 				infowindow[open_infowindow].close();
+				open_infowindow = ctr;
 			}
 		}
 
