@@ -1,170 +1,156 @@
-	<textarea id="input_thought"></textarea>
+	<textarea placeholder="Type your idea here..." id="input_thought"></textarea>
 	<!--<div class="visual_search span8"></div>-->
 	<a id="quick_remember" class="btn btn-success">Remember</a>
 	<div id="locations">
-		<input type="hidden" id="position_holder" />
+		<input type="text" id="position_holder" />
 	</div>
+<style>
+	#input_thought {
+		resize: none;
+		width: 650px;
+		height: 50px;
+	}
+</style>
 
 <script>
+		//Define variables
+		var trigger;
 
-		$("#input_thought").keyup(function(){
+		var loc;
+		var tag;
+		var timeframe;
+
+		$("#input_thought").tooltip({
+			animation: true,
+			title: "@ = loc., # = tag, + = image, text = idea"
+		});
+
+
+		function split(val, trigger) {
+			if (trigger == "@"){
+			    return val.split(/@\s*/);
+			}
+			else if (trigger == "#"){
+			    return val.split(/#\s*/);
+			}
+			else if (trigger == "+"){
+			    return val.split(/\+\s*/);
+			}
+			else if (trigger == "&"){
+			    return val.split(/&\s*/);
+			}
+		}
+
+		function extractLast(term, trigger) {
+		    return split(term, trigger).pop();
+		}
+
+		function get_data(trigger){
+			if (trigger == "@"){
+			    var availableTags = ['Here', 'There'];
+			}
+			else if (trigger == "#"){
+			    var availableTags = [
+				<% @tags.each do |thought| %>
+					'<%= thought.tag %>'
+					<% if thought != @tags.last %>,<% end %>
+				<% end %>
+				];
+			}
+			else if (trigger == "+"){
+			    var availableTags = ['Soon', 'Someday'];
+			}
+			else if (trigger == "&"){
+				var availableTags = ['Soon', 'Someday'];
+			     /*var availableTags = [
+				<% @users.each do |user| %>
+					'<%= user.username %>'
+					<% if user != @users.last %>,<% end %>
+				<% end %>
+				];*/
+			}
+			return availableTags;
+		}
+
+		$("#input_thought")
+		// don't navigate away from the field on tab when selecting an item
+		.bind("keyup", function(event) {
 			var str = $("#input_thought").val();
 			var last = str.charAt(str.length - 1);
 			if (last == "@"){
-				/*var position = $("#position_holder").position();
-				position = [position.left, position.top];
-				$("#locations").dialog( {position: position, closeText: "" });*/
-
-				var locations = ["@near", "@far", "@wherever"];
-				function split( val ) {
-					return val.split( /,\s*/ );
-				}
-				function extractLast( term ) {
-					return split( term ).pop();
-				}
-				$("#input_thought")
-					.autocomplete({
-						minLength: 0,
-						source: locations,
-						focus: function() {
-							// prevent value inserted on focus
-							return false;
-						},
-						select: function( event, ui ) {
-							var terms = split( this.value );
-							// remove the current input
-							terms.pop();
-							// add the selected item
-							terms.push( ui.item.value );
-							// add placeholder to get the comma-and-space at the end
-							terms.push( "" );
-							this.value = terms.join( ", " );
-							return false;
-						}
-					});
+				trigger = "@";
 			}
-			if (last == "#"){
-				/*var position = $("#position_holder").position();
-				position = [position.left, position.top];
-				$("#locations").dialog( {position: position, closeText: "" });*/
-
-				var locations = ["#near", "#far", "#wherever"];
-				function split( val ) {
-					return val.split( /,\s*/ );
-				}
-				function extractLast( term ) {
-					return split( term ).pop();
-				}
-				$("#input_thought")
-					.autocomplete({
-						minLength: 0,
-						source: locations,
-						focus: function() {
-							// prevent value inserted on focus
-							return false;
-						},
-						select: function( event, ui ) {
-							var terms = split( this.value );
-							// remove the current input
-							terms.pop();
-							// add the selected item
-							terms.push( ui.item.value );
-							// add placeholder to get the comma-and-space at the end
-							terms.push( "" );
-							this.value = terms.join( ", " );
-							return false;
-						}
-					});
+			else if (last == "#"){
+				trigger = "#";
 			}
-
+			else if (last == "&"){
+				trigger = "&";
+			}
+		    if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+			event.preventDefault();
+		    }
+		}).autocomplete({
+		    minLength: 0,
+		    source: function(request, response) {
+			var availableTags = get_data(trigger);
+			var term = request.term,
+			    results = [];
+			if (term.indexOf(trigger) >= 0) {
+			    term = extractLast(request.term, trigger);
+			    if (term.length > 0) {
+				results = $.ui.autocomplete.filter(
+				availableTags, term);
+			    }
+			}
+			response(results);
+		    },
+		    focus: function() {
+			// prevent value inserted on focus
+			return false;
+		    },
+		    select: function(event, ui) {
+			var terms = split(this.value, trigger);
+			// remove the current input
+			terms.pop();
+			// add the selected item
+			terms.push(trigger+ui.item.value);
+			// add placeholder to get the comma-and-space at the end
+			terms.push(" ");
+			this.value = terms.join("");
+			if (trigger == "@"){
+			    loc = ui.item.value;
+			}
+			else if (trigger == "#"){
+			    tag = ui.item.value;
+			}
+			else if (trigger == "&"){
+			    timeframe = ui.item.value;
+			}
+			return false;
+		    }
 		});
-		/*
-		$("#location_input").autocomplete({
-			select: function(event, ui){
-				var current = $("#input_thought").val();
-				$("#input_thought").val(current + ui.item.value);
-				$("#locations").dialog("close");
-				$("#input_thought").focus();
-			}
-		});*/
+
 		navigator.geolocation.getCurrentPosition(here);
-		/*$("#quick_remember").click(function(){
-			var query = visualSearch.searchQuery.facets();
-			var text = query[3].text;
-
-			if (query[0].location == "Here"){
-				// One-shot position request.
-				var location = $("#position_holder").val();
+		$("#quick_remember").click(function(){
+			if (loc == "Here"){
+				var pos = $("#position_holder").val();
 			}
-			var tag = query[2].tag;
-			var timeframe = query[1].timeframe;
+			//Strip down input to just text
+			var content = $("#input_thought").val();
+			content = content.replace(new RegExp("@"+loc,"i"),"");
+			content = content.replace(new RegExp("#"+tag,"i"),"");
+			content = content.replace(new RegExp("&"+timeframe,"i"),"");
 
-			$.post('/thoughts', { type: "unique_thought", idea: text, location: location, tag: tag, timeframe: timeframe }, null, 'script')
+			$.post('/thoughts', { type: "unique_thought", idea: content, location: pos, tag: tag, timeframe: timeframe }, null, 'script')
 			.error(function() { alert('Cannot save thought!'); });
 			return true;
-		});*/
+		});
 
 		function here(position){
 			$("#position_holder").val(position.coords.latitude+","+position.coords.longitude);
 		};
 
-		/*var visualSearch;
-		$(document).ready(function() {
-        		visualSearch = VS.init({
-			  container  : $('.visual_search'),
-			  query      : 'Type in your thought here...',
-			  unquotable : [
-			    'location', 'tag', 'timeframe', 'text'
-			  ],
-          callbacks  : {
-            search : function(query, searchCollection) {
-              var $query = $('#search_query');
-              var count  = searchCollection.size();
-              $query.stop().animate({opacity : 1}, {duration: 300, queue: false});
-              $query.html('<span class="raquo">&raquo;</span> You searched for: ' +
-                          '<b>' + (query || '<i>nothing</i>') + '</b>. ' +
-                          '(' + count + ' facet' + (count==1 ? '' : 's') + ')');
-              clearTimeout(window.queryHideDelay);
-              window.queryHideDelay = setTimeout(function() {
-                $query.animate({
-                  opacity : 0
-                }, {
-                  duration: 1000,
-                  queue: false
-                });
-              }, 2000);
-            },
-            facetMatches : function(callback) {
-              callback([
-                'location', 'tag', 'timeframe', 'text'
-              ]);
-            },
-            valueMatches : function(facet, searchTerm, callback) {
-              switch (facet) {
-              case 'location':
-                  callback([
-                     'Here'
-                  ]);
-                  break;
-                case 'tag':
-                  callback([
-			<% @tags.each do |tag| %>
-	                    '<%= tag.tag %>'
-			    <% if tag != @tags.last %>,<% end %>
-			<% end %>
-                  ]);
-                  break;
-                case 'timeframe':
-                  callback([
-                    'Soon',
-                    'Someday',
-                    'By Date',
-                    'Every'
-                  ]);
-                  break;
-              }
-            }
-          }
-        });
-      });*/
+
+
+
 </script>

@@ -1,7 +1,6 @@
 <% if signed_in? %>
-	<section class="well span10 form-inline">
+	<section id="tweet_form" class="well span10 form-inline">
 		<%= render :partial => "thought_tweet" %>
-
 	</section>
 
 	<section id="notice_area" class="well span10">
@@ -28,13 +27,11 @@
 	</section>
 	<section class="span10 well form-inline">
 		<h3><%= @title3 %></h3>
-		<p> Distance:
-			<%= radio_button_tag 'distance', "0.1", :checked => true %><label class="radio">Here</label>
-			<%= radio_button_tag 'distance', "1" %><label class="radio">1 mi.</label>
-			<%= radio_button_tag 'distance', "5" %><label class="radio">5 mi.</label>
-			<%= radio_button_tag 'distance', "10" %><label class="radio">10 mi.</label>
+		<p><span class="span1">Here </span><span class="span6" id="slider"></span><span>&nbsp;&nbsp;&nbsp; Infinity and beyond</span></p>
+		<p>
+			<span id="tags_range"></span>
+			<span id="tags_nearby"></span>
 		</p>
-		<span id="tags_nearby"></span>
 	</section>
 
 	<!-- Render modal -->
@@ -52,10 +49,29 @@
 
 <script>
 
-	$('input[name=distance]:radio').click(function(){
+	$(function() {
+			$("#slider").slider({
+				min: 1,
+				max: 100,
+				range: 'min',
+				animate: true,
+				create: function(event, ui){
+
+				},
+				slide: function(event, ui){
+					var val = ui.value/5;
+					$('#tags_nearby').html('');
+					update_nearby(val);
+				}
+
+			});
+		});
+
+	/*$('input[name=distance]:radio').click(function(){
 		$('#tags_nearby').html('');
 		update_nearby($('input[name=distance]:radio:checked').val());
-	});
+	});*/
+
 	$('input[name=type]:radio').change(function(){
 		$('#search').attr('disabled', false);
 		$('#submit').attr('disabled', false);
@@ -70,6 +86,7 @@
 			$('#search').datepicker("destroy");
 		}
 	});
+
 	$('#search').keyup(function(){
 		$('#search-results').show();
 		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
@@ -100,6 +117,7 @@
 		// Current location
 		lat1 = position.coords.latitude * Math.PI/180;
 		lon1 = position.coords.longitude * Math.PI/180;
+		$("#tags_range").html("Within: "+radius+" mile(s) -->");
 		for (var i=0; i < tag_coords.length; i++){
 
 			// Thought location

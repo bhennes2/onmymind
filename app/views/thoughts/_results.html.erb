@@ -2,45 +2,66 @@
 	<%= render :partial => 'header_thoughts' %>
 <% end %>
 <% if @thoughts != [] %>
-	<table class="table table-striped">
-		<thead>
-		<tr>
-			<th>ID</th>
-			<th>Idea</th>
-			<th>Timeframe</th>
-			<th>Timeframe Date</th>
-			<th>User ID</th>
-			<th>Tag</th>
-			<th>Show</th>
-			<th>Edit</th>
-			<th>Delete</th>
-			<th>Done?</th>
-		</tr>
-		</thead>
-	<% @thoughts.each do |thought| %>
-		<tr>
-			<td><%= thought.id %></td>
-			<td><%= thought.idea %></td>
-			<td><%= thought.timeframe %></td>
-			<td><a href="/dates?date=<%= thought.timeframe_date %>"><%= thought.timeframe_date %></a></td>
-			<td><%= thought.user_id %></td>
-			<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
-			<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
-			<td><a href="/thoughts/<%= thought.id %>/edit"><i class="icon-pencil"></i><a/></td>
-    			<td><a href="/thoughts/<%= thought.id %>" data-confirm="Are you sure?" data-method="delete" rel="nofollow"><i class="icon-remove"></i></a></td>
-			<td><%= form_for(thought) do |f| %>
-				<div class="field">
-					<%= f.check_box :complete, :id => thought.id, :class => "checkbox" %>
-				</div>
-			    <% end %>
-			</td>
-		</tr>
-	<% end %>
-	</table>
-	<br />
+	<div id="main" style="position: relative; width: 940px;">
+		<ul id="tiles">
+		<% @thoughts.each do |thought| %>
+			<li style="display: inline;">
+				<% if thought.idea.match(/\s/) %>
+					<img src='assets/twitter.jpg' style="max-width: 180px;" />
+				<% else %>
+					<% search = 'http://'+ thought.idea + '.jpg.to' %>
+					<img src='<%= search %>' style="max-width: 180px;" />
+				<% end %>
+				<% if thought.user_id != current_user.id %>
+					<span class="badge badge-info"><i class="icon-user icon-white"></i> <%= User.find(thought.user_id).username %></span>
+				<% else %>
+					<span class="badge badge-info"><i class="icon-user icon-white"></i> Me</span>
+				<% end %>
+				<p>Idea: <a href="/thoughts/<%= thought.id %>"><%= thought.idea %></a></p>
+				<p><a id="<%= thought.id %>" href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a>
+					<% if thought.image_content != "" %>
+						<i class="icon-picture"></i>
+					<% end %>
+					<% if thought.link_content != "" %>
+						<i class="icon-search"></i>
+					<% end %>
+					<% if thought.location_content != "" %>
+						<i class="icon-road"></i>
+					<% end %>
+					<% if thought.text_content != "" %>
+						<i class="icon-list"></i>
+					<% end %>
+					<% if thought.email_content != "" %>
+						<i class="icon-comment"></i>
+					<% end %>
+
+				</p>
+
+			</li>
+		<% end %>
+		</ul>
+	</div><!-- main -->
 <% end %>
 
 <script>
+	$(document).ready(function(){
+		// Prepare layout options.
+	      var options = {
+		autoResize: true, // This will auto-update the layout when the browser window is resized.
+		container: $('#main'), // Optional, used for some extra CSS styling
+		offset: 2, // Optional, the distance between grid items
+		itemWidth: 200 // Optional, the width of a grid item
+	      };
+
+	      // Call the layout function.
+	      $('#tiles li').wookmark(options);
+		$(window).resize();
+
+
+	});
+
+
+
 	$('.checkbox').change(function(){
 		alert("Mark this complete?");
 		$.post("/completed", { id: $(this).attr('id'), value: true }, alert("Completed!"), 'script');
@@ -48,3 +69,83 @@
 	});
 
 </script>
+
+<style>
+/**
+ * Grid container
+ */
+#tiles {
+list-style-type: none;
+position: relative; /** Needed to ensure items are laid out relative to this container **/
+margin: 0;
+}
+
+/**
+ * Grid items
+ */
+#tiles li {
+width: 200px;
+background-color: #ffffff;
+border: 1px solid #dedede;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+border-radius: 2px;
+display: none; /** Hide items initially to avoid a flicker effect **/
+  cursor: pointer;
+padding: 4px;
+}
+
+#tiles li img {
+display: block;
+padding: 5px;
+}
+
+/**
+ * Grid item text
+ */
+#tiles li p {
+color: #666;
+font-size: 12px;
+margin: 7px 0 0 7px;
+}
+
+/**
+ * Some extra styles to randomize heights of grid items.
+ */
+#tiles ali:nth-child(3n) {
+height: 175px;
+}
+
+#tiles ali:nth-child(4n-3) {
+padding-bottom: 30px;
+}
+
+#tiles ali:nth-child(5n) {
+height: 250px;
+}
+
+/** General page styling **/
+
+html {
+background-color: #e9e9e9;
+}
+
+#main {
+padding: 30px 0 30px 0;
+}
+
+header h1 {
+text-align: center;
+font-size: 24px;
+font-weight: normal;
+margin: 30px 0 3px 0;
+}
+
+header p {
+text-align: center;
+font-size: 13px;
+color: #777;
+margin: 0;
+}
+
+</style>

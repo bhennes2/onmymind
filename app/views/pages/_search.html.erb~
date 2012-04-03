@@ -1,9 +1,38 @@
 <% @thoughts = Thought.search(params[:search],params[:type]) %>
-Displaying <strong><%= pluralize(@thoughts.count, 'result') %></strong> for a <strong><%= params[:type] %></strong> search on <strong><%= params[:search] %></strong><br />
-<% @thoughts.each do |thought| %>
-	<% if params[:search] = "Idea" %>
-		<%= thought.id %> | <%= thought.idea %> | for tag: <%= thought.tag %> | <%= link_to 'Show', thought %><br />
-	<% else %>
-		<%= thought.id %> | <%= thought.idea %> | <%= link_to 'Show', thought %><br />
+<table class="table table-striped">
+		<thead>
+			<th>Displaying <strong><%= pluralize(@thoughts.count, 'result') %></strong> for a <strong><%= params[:type] %></strong> search on <strong><%= params[:search] %></strong><br /></th>
+		</thead>
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Idea</th>
+			<th>Timeframe</th>
+			<th>Timeframe Date</th>
+			<th>Tag</th>
+			<th>Show</th>
+			<th>Edit</th>
+			<th>Delete</th>
+			<th>Done?</th>
+		</tr>
+		</thead>
+	<% @thoughts.each do |thought| %>
+		<tr>
+			<td><%= thought.id %></td>
+			<td><%= thought.idea %></td>
+			<td><%= thought.timeframe %></td>
+			<td><a href="/dates?date=<%= thought.timeframe_date %>"><%= thought.timeframe_date %></a></td>
+			<td><a href="/tags?tag=<%= thought.tag %>"><%= thought.tag %></a></td>
+			<td><a href="/thoughts/<%= thought.id %>"><i class="icon-book"></i></a></td>
+			<td><a href="/thoughts/<%= thought.id %>/edit"><i class="icon-pencil"></i><a/></td>
+    			<td><a href="/thoughts/<%= thought.id %>" data-confirm="Are you sure?" data-method="delete" rel="nofollow"><i class="icon-remove"></i></a></td>
+			<td><%= form_for(thought) do |f| %>
+				<div class="field">
+					<%= f.check_box :complete, :id => thought.id, :class => "checkbox" %>
+				</div>
+			    <% end %>
+			</td>
+		</tr>
 	<% end %>
-<% end %>
+	</table>
+	<br />

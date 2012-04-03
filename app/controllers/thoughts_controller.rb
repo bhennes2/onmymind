@@ -21,23 +21,23 @@ class ThoughtsController < ApplicationController
 		# Thoughts
 		if current_user.admin?
 			if params[:type] == "Incomplete"
-				@thoughts = Thought.where(:complete => [nil, false])
+				@thoughts = Thought.where(:complete => [nil, false]).order("tag DESC")
 			elsif params[:type] == "Completed"
-				@thoughts = Thought.where(:complete => true)
+				@thoughts = Thought.where(:complete => true).order("tag DESC")
 			elsif params[:type] == "All"
-				@thoughts = Thought.all
+				@thoughts = Thought.order("tag DESC").all
 			else
-				@thoughts = Thought.all
+				@thoughts = Thought.order("tag DESC").all
 			end
 		else
 			if params[:type] == "Incomplete"
-				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id)
+				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id).order("tag DESC")
 			elsif params[:type] == "Completed"
-				@thoughts = Thought.where(:complete => true, :user_id => current_user.id)
+				@thoughts = Thought.where(:complete => true, :user_id => current_user.id).order("tag DESC")
 			elsif params[:type] == "All"
-				@thoughts = Thought.where(:user_id => current_user.id)
+				@thoughts = Thought.where(:user_id => current_user.id).order("tag DESC")
 			else
-				@thoughts = Thought.where(:user_id => current_user.id)
+				@thoughts = Thought.where(:user_id => current_user.id).order("tag DESC")
 			end
 		end
 

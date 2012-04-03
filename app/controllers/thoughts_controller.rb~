@@ -21,23 +21,23 @@ class ThoughtsController < ApplicationController
 		# Thoughts
 		if current_user.admin?
 			if params[:type] == "Incomplete"
-				@thoughts = Thought.where(:complete => [nil, false])
+				@thoughts = Thought.where(:complete => [nil, false]).order("tag DESC")
 			elsif params[:type] == "Completed"
-				@thoughts = Thought.where(:complete => true)
+				@thoughts = Thought.where(:complete => true).order("tag DESC")
 			elsif params[:type] == "All"
-				@thoughts = Thought.all
+				@thoughts = Thought.order("tag DESC").all
 			else
 				@thoughts = Thought.all
 			end
 		else
 			if params[:type] == "Incomplete"
-				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id)
+				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id).order("tag DESC")
 			elsif params[:type] == "Completed"
-				@thoughts = Thought.where(:complete => true, :user_id => current_user.id)
+				@thoughts = Thought.where(:complete => true, :user_id => current_user.id).order("tag DESC")
 			elsif params[:type] == "All"
-				@thoughts = Thought.where(:user_id => current_user.id)
+				@thoughts = Thought.where(:user_id => current_user.id).order("tag DESC")
 			else
-				@thoughts = Thought.where(:user_id => current_user.id)
+				@thoughts = Thought.where(:user_id => current_user.id).order("tag DESC")
 			end
 		end
 
@@ -72,10 +72,10 @@ class ThoughtsController < ApplicationController
 			@title = "Thoughts by tag"
 			if current_user.admin?
 				@thoughts = Thought.select("tag").group("tag").reorder("tag DESC")
-				@count_tag = Thought.order("tag DESC").group("tag").count
+				@count_tag = Thought.reorder("tag DESC").group("tag").count
 			else
 				@thoughts = Thought.where(:user_id => current_user.id).select("tag").group("tag").reorder("tag DESC")
-				@count_tag = Thought.where(:user_id => current_user.id).order("tag DESC").group("tag").count
+				@count_tag = Thought.where(:user_id => current_user.id).reorder("tag DESC").group("tag").count
 			end
 		elsif params[:type] == "location"
 			@title = "Thoughts by location"

@@ -28,3 +28,5 @@
 #thought_note_email:checked { background: url('/assets/email-on.png'); }
 #thought_note_text { background: url('/assets/text-off.png'); }
 #thought_note_text:checked { background: url('/assets/text-on.png'); }
+
+.myElements { resize: both; }

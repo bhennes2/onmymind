@@ -1,2 +1,2 @@
 $("#close").trigger('click');
-//$("#notice_area").prepend('<p class='alert-success alert'>Thought successfully created!  See it <%= link_to 'here', '/thoughts' %></p>');
+$("#tweet_form").html('Thought created successfully!');
