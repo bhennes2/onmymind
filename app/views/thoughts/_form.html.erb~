@@ -12,45 +12,57 @@
   	  </div>
   	<% end %>
 
-	<div class="field form-inline">
-		<span>Remember to: </span>
-		<%= f.text_field :idea, :autocomplete => false %> <label id="counter"></label>
+	<div id="text_area_holder" class="form-inline" style="position: relative;">
+		<%= f.text_area :idea, :placeholder => "What's on your mind...", :rows => "3", :style => "width: 800px !important; resize: none;" %>
+		<label id="counter" style="position: absolute; top: 40px; left: 775px;"></label>
+		<%= f.submit :value => "Remember!", :class => "btn-success", :id => "submit_button" %>
+		<img id="timeframe_selected" class="options-selected" src="/assets/clock.gif" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 0px; top: 40px;"/>
+		<img id="image_selected" class="options-selected" src="/assets/picture-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 50px; top: 40px;" title="Add an image" />
+		<img id="location_selected" class="options-selected" src="/assets/location-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 100px; top: 40px;" title="Add a location"/>
+		<img id="link_selected" class="options-selected" src="/assets/link-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 150px; top: 40px;" title="Add a link" />
+		<img id="email_selected" class="options-selected" src="/assets/email-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 200px; top: 40px;" title="Add an email" />
+		<img id="text_selected" class="options-selected" src="/assets/text-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 250px; top: 40px;" title="Add text" />
 	</div><br />
-	<div class="field">
-		<span>I'll do this: </span>
-		<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %><br />
-		<%= f.text_field :timeframe_date, :style => "display: none;" %><br />
-		<select style="display: none;" id="frequency" class="frequency">
-			<option></option>
-			<option>Daily</option>
-			<option>Weekly</option>
-			<option>Monthly</option>
-			<option>Yearly</option>
-		</select>
-		<input id="frequency_date" class="frequency" style="display: none;" type="text"></input>
-	</div>
-	<div class="field">
-		<span>Tag this to: </span>
-		<%= f.text_field :tag, :autocomplete => false %><br />
-	</div>
-	<div class="field">
-		<span>A litte note: </span>
-		<%= f.check_box :note_image, :class => "checkbox" %>
-		<%= f.check_box :note_link, :class => "checkbox" %>
-		<%= f.check_box :note_location, :class => "checkbox" %>
-		<%= f.check_box :note_email, :class => "checkbox" %>
-		<%= f.check_box :note_text, :class => "checkbox" %>
-	</div>
-	<div id="note_content">
+	<div id="options" class="form-inline">
+		<img id="timeframe" class="options" src="/assets/clock.gif" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a timeframe" />
 		<% if !(request.user_agent.include? "iphone" || "ipad") %>
-			<%= f.text_field :image_content, :class => "note_content_field", :style => "display: none;" %>
+			<img id="image" class="options" src="/assets/picture-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add an image" />
 		<% end %>
-		<%= f.text_field :link_content, :class => "note_content_field", :style => "display: none;" %>
-		<div id="location_information" style="display: none;" class="note_content_field">
-			<%= f.text_field :location_content, :class => "note_content_field", :style => "display: none;" %>
-			<img id="locate_current" src="/assets/home.png" alt="Find current location" title="Find current location" />
-			<img id="locate_list" src="/assets/more.png" alt="Find saved locations" title="Find saved locations" />
-			<img id="locate_place" src="/assets/search.png" alt="Find a place" title="Find a place" /><br />
+		<img id="location" class="options" src="/assets/location-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a location"/>
+		<img id="link" class="options" src="/assets/link-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a link" />
+		<img id="email" class="options" src="/assets/email-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add an email" />
+		<img id="text" class="options" src="/assets/text-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add text" />
+	</div><!-- options -->
+	<div id="options-dialog" style="padding: 20px;">
+		<div id="timeframe_select" class="field" style="display: none;">
+			<h1 id="timeframe_heading" class="form-inline">Choose your timeframe:
+				<%= f.select :timeframe, [" ", "Soon", "Someday", "By Date", "Every"] %>
+				<%= f.text_field :timeframe_date, :style => "display: none;" %>
+				<select style="display: none;" id="frequency" class="frequency">
+					<option></option>
+					<option>Daily</option>
+					<option>Weekly</option>
+					<option>Monthly</option>
+					<option>Yearly</option>
+				</select>
+				<input id="frequency_date" class="frequency" style="display: none;" type="text"></input>
+			</h1>
+		</div>
+
+		<% if !(request.user_agent.include? "iphone" || "ipad") %>
+			<div id="image_upload" class="field" style="display: none;">
+				<h1>Upload an image:
+					<%= f.file_field :image_content %>
+				</h1>
+			</div>
+		<% end %>
+		<div id="location_information" style="display: none;" class="field">
+			<h1 id="location_heading">Select your location:
+				<%= f.hidden_field :location_content, :class => "note_content_field" %>
+				<img id="locate_current" src="/assets/home.png" alt="Find current location" title="Find current location" />
+				<img id="locate_list" src="/assets/more.png" alt="Find saved locations" title="Find saved locations" />
+				<img id="locate_place" src="/assets/search.png" alt="Find a place" title="Find a place" />
+			</h1>
 			<div id="locations" style="display: none;">
 				<table>
 					<tr>
@@ -83,14 +95,25 @@
 
 			</div><!-- map-->
 		</div><!-- location_information -->
+		<div id="link_text" style="display: none;" class="field">
+			<%= f.text_field :link_content, :placeholder => "Enter your link here..." %>
+		</div>
+		<div id="email_text" style="display: none;" class="field">
+			<%= f.text_area :email_content, :placeholder => "Enter your email here..." %>
+		</div>
+		<div id="text_holder" style="display: none;" class="field">
+			<%= f.text_area :text_content, :placeholder => "Enter your text here..." %>
+		</div>
+	</div><!-- options-dialog -->
 
-		<%= f.text_area :email_content, :class => "note_content_field", :style => "display: none;" %>
-		<%= f.text_area :text_content, :class => "note_content_field", :style => "display: none;" %>
-	</div><!-- note_content -->
-	<div class="field">
+		<%= f.hidden_field :note_image %>
+		<%= f.hidden_field :note_link %>
+		<%= f.hidden_field :note_location %>
+		<%= f.hidden_field :note_email %>
+		<%= f.hidden_field :note_text %>
+
 		<%= f.hidden_field :user_id, :value => current_user.id %>
 		<%= f.hidden_field :complete, :value => false %>
-	</div>
 	<div class="field form-inline" id="reminder_area" style="display: none;">
 		<label>Set a reminder?</label>
 		<input type="checkbox" id="reminder"></input>
@@ -98,9 +121,144 @@
 			<p>Remind me <%= f.text_field :reminder_timeframe, :size => "1" %> day(s) before due date</p>
 		</div><!-- reminder_input -->
 	</div>
-	<br />
-  <div class="actions">
-    <%= f.submit :value => "Remember!", :class => "btn-primary" %>
-  </div>
+	<%= f.hidden_field :tag %>
 <% end %>
 </section>
+
+<script>
+	$(".options").click(function(){
+		$(".field").slideUp();
+		var option = $(this).attr('id');
+
+		$(".options").removeClass('active_option');
+		$("#"+option).addClass('active_option');
+		//$("#"+option+"_selected").slideDown();
+		if (option == "timeframe"){
+			$("#timeframe_select").slideDown();
+		}
+		else if (option == "image"){
+			$("#image_upload").slideDown();
+		}
+		else if (option == "location"){
+			$("#location_information").slideDown();
+		}
+		else if (option == "link"){
+			$("#link_text").slideDown();
+		}
+		else if (option == "email"){
+			$("#email_text").slideDown();
+		}
+		else if (option == "text"){
+			$("#text_holder").slideDown();
+		}
+	});
+	$("#thought_idea").tooltip({
+		animation: true,
+		title: "Use # to trigger a list of your tags"
+	});
+
+	//Define variables
+	var trigger;
+
+	var loc;
+	var tag;
+	var timeframe;
+
+	function split(val, trigger) {
+		if (trigger == "#"){
+		    return val.split(/#\s*/);
+		}
+	}
+
+	function extractLast(term, trigger) {
+	    return split(term, trigger).pop();
+	}
+
+	function get_data(trigger){
+		if (trigger == "#"){
+		    var availableTags = [
+			<% @thoughts.each do |thought| %>
+				'<%= thought.tag %>'
+				<% if thought != @thoughts.last %>,<% end %>
+			<% end %>
+			];
+		}
+		return availableTags;
+	}
+
+	$("#thought_idea")
+	// don't navigate away from the field on tab when selecting an item
+	.bind("keyup", function(event) {
+		var str = $("#thought_idea").val();
+		var last = str.charAt(str.length - 1);
+		if (last == "@"){
+			trigger = "@";
+		}
+		else if (last == "#"){
+			trigger = "#";
+		}
+		else if (last == "&"){
+			trigger = "&";
+		}
+	    if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+		event.preventDefault();
+	    }
+	}).autocomplete({
+	    minLength: 0,
+	    source: function(request, response) {
+		var availableTags = get_data(trigger);
+		var term = request.term,
+		    results = [];
+		if (term.indexOf(trigger) >= 0) {
+		    term = extractLast(request.term, trigger);
+		    if (term.length > 0) {
+			results = $.ui.autocomplete.filter(
+			availableTags.unique(), term);
+		    }
+		}
+		response(results);
+	    },
+	    focus: function() {
+		// prevent value inserted on focus
+		return false;
+	    },
+	    select: function(event, ui) {
+		var terms = split(this.value, trigger);
+		// remove the current input
+		terms.pop();
+		// add the selected item
+		terms.push(trigger+ui.item.value);
+		// add placeholder to get the comma-and-space at the end
+		terms.push(" ");
+		this.value = terms.join("");
+		if (trigger == "#"){
+		    tag = ui.item.value;
+		    $("#thought_tag").val(tag);
+		}
+		return false;
+	    }
+	});
+
+	$("#thought_timeframe").change(function(){
+		if ($("#thought_timeframe option:selected") != " "){
+			$("#timeframe_selected").slideDown();
+			$("#timeframe_heading").append('<img src="/assets/check_green.gif" />');
+		}
+	});
+	$("#locate_current").click(function(){
+		$("#location_selected").slideDown();
+		$("#location_heading").append('<img src="/assets/check_green.gif" />');
+	});
+
+	$("#new_thought").submit(function(){
+		var str = $("#thought_idea").val();
+		str = str.replace("#"+tag,"");
+		$("#thought_idea").val(str);
+
+		if ($("#thought_location_content").val() != ""){
+			$("#thought_note_location").val("1");
+		}
+	});
+
+
+</script>

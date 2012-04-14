@@ -27,7 +27,7 @@ class ThoughtsController < ApplicationController
 			elsif params[:type] == "All"
 				@thoughts = Thought.order("tag DESC").all
 			else
-				@thoughts = Thought.all
+				@thoughts = Thought.order("tag DESC").all
 			end
 		else
 			if params[:type] == "Incomplete"

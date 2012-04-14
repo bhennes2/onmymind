@@ -8,24 +8,28 @@
 
 <script>
 	$(function(){
-		var max_length = 30;
+		var max_length = 140;
 		// get current number of characters
 		$('#counter').html(max_length - $('#thought_idea').val().length);
 
 		$('#thought_idea').keyup(function()
-		{
-			// get new length of characters
+		{	// get new length of characters
 			if ($(this).val().length >= max_length)
 			{
-				$('#counter').html('You have reached the maximum limit of ' + max_length);
+				$('#counter').html('0');
 				$(this).val($(this).val().substr(0, max_length));
+			}
+			else if ( (max_length - $(this).val().length) < 15 ){
+				$('#counter').html(max_length - $(this).val().length);
+				$('#counter').addClass("input_limit");
 			}
 			else
 			{
+				$('#counter').removeClass("input_limit");
 				$('#counter').html(max_length - $(this).val().length);
 			}
 		});
-
+		/*
 		//Autocomplete idea and tag
 		var available_ideas = [<% @thoughts.each do |thought| %>
 						"<%= thought.idea %>"
@@ -36,7 +40,7 @@
 						<% if thought != @thoughts.last %>,<% end %>
 					<% end %>];
 		$("#thought_idea").autocomplete({ source: available_ideas.unique() });
-		$("#thought_tag").autocomplete({ source: available_tags.unique() });
+		$("#thought_tag").autocomplete({ source: available_tags.unique() });*/
 
 	});
 
@@ -111,6 +115,7 @@
 
 			// One-shot position request.
     			navigator.geolocation.getCurrentPosition(showMap);
+			$("#thought_note_location").val("1");
 	});
 	$("#locate_list").click(function(){
 			$("#map_area").hide();
@@ -202,7 +207,7 @@
 		$("#reminder_input").toggle();
 	});
 
-	$("#new_thought").submit(function(){
+	/*$("#new_thought").submit(function(){
 		if ($("#thought_idea").val() == "")
 		{
 			alert("Must submit an idea.");
@@ -229,7 +234,7 @@
 				return false;
 			}
 		}
-	});
+	});*/
 
 	//Return new array with duplicate values removed
 	Array.prototype.unique =

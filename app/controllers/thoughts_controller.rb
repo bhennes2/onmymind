@@ -152,7 +152,7 @@ class ThoughtsController < ApplicationController
 		@h1 = "This just popped into my head..."
 		@thought = Thought.new
 
-		@thoughts = Thought.where(:user_id => current_user.id)
+		@thoughts = Thought.all
 
 		@top_tags = @thoughts.each {|thought| print thought.tag }
 
