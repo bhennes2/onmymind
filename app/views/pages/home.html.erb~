@@ -30,9 +30,6 @@
 	</section>
 
 
-	<!-- Render modal -->
-	<%= render :partial => 'thought_modal' %>
-
 <% else %>
 	<!-- Main hero unit for a primary marketing message or call to action -->
 		<div class="hero-unit">
