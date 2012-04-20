@@ -11,15 +11,16 @@ class ThoughtsController < ApplicationController
 
 		# Thought counter
 		if current_user.admin?
-			@count = Thought.all.count
-			@count_incomplete = Thought.where(:complete => [nil, false]).count
+
 		else
-			@count = Thought.where(:user_id => current_user.id).count
-			@count_incomplete = Thought.where(:user_id => current_user.id, :complete => [nil, false]).count
+
 		end
 
 		# Thoughts
 		if current_user.admin?
+			@count = Thought.all.count
+			@count_incomplete = Thought.where(:complete => [nil, false]).count
+
 			if params[:type] == "Incomplete"
 				@thoughts = Thought.where(:complete => [nil, false]).order("tag DESC")
 			elsif params[:type] == "Completed"
@@ -30,6 +31,9 @@ class ThoughtsController < ApplicationController
 				@thoughts = Thought.order("tag DESC").all
 			end
 		else
+			@count = Thought.where(:user_id => current_user.id).count
+			@count_incomplete = Thought.where(:user_id => current_user.id, :complete => [nil, false]).count
+
 			if params[:type] == "Incomplete"
 				@thoughts = Thought.where(:complete => [nil, false], :user_id => current_user.id).order("tag DESC")
 			elsif params[:type] == "Completed"
@@ -152,14 +156,16 @@ class ThoughtsController < ApplicationController
 		@h1 = "This just popped into my head..."
 		@thought = Thought.new
 
-		@thoughts = Thought.where(:user_id => current_user.id)
+		@thoughts = Thought.all
 
 		@top_tags = @thoughts.each {|thought| print thought.tag }
 
 		if current_user.admin?
 			@thoughts_location = Thought.where(:note_location => "1")
+			@thoughts_recent = Thought.order("created_at DESC").limit(6)
 		else
 			@thoughts_location = Thought.where(:user_id => current_user.id, :note_location => "1")
+			@thoughts_recent = Thought.where(:user_id => current_user).order("created_at DESC").limit(6)
 		end
 
 		respond_to do |format|

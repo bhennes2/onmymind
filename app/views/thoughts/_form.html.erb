@@ -17,21 +17,21 @@
 		<label id="counter" style="position: absolute; top: 40px; left: 775px;"></label>
 		<%= f.submit :value => "Remember!", :class => "btn-success", :id => "submit_button" %>
 		<img id="timeframe_selected" class="options-selected" src="/assets/clock.gif" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 0px; top: 40px;"/>
-		<img id="image_selected" class="options-selected" src="/assets/picture-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 50px; top: 40px;" title="Add an image" />
+		<!--<img id="image_selected" class="options-selected" src="/assets/picture-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 50px; top: 40px;" title="Add an image" />-->
 		<img id="location_selected" class="options-selected" src="/assets/location-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 100px; top: 40px;" title="Add a location"/>
-		<img id="link_selected" class="options-selected" src="/assets/link-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 150px; top: 40px;" title="Add a link" />
+		<!--<img id="link_selected" class="options-selected" src="/assets/link-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 150px; top: 40px;" title="Add a link" />
 		<img id="email_selected" class="options-selected" src="/assets/email-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 200px; top: 40px;" title="Add an email" />
-		<img id="text_selected" class="options-selected" src="/assets/text-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 250px; top: 40px;" title="Add text" />
+		<img id="text_selected" class="options-selected" src="/assets/text-on.png" style="display: none; max-width: 20px; padding: 0 50px; position: absolute; left: 250px; top: 40px;" title="Add text" />-->
 	</div><br />
 	<div id="options" class="form-inline">
 		<img id="timeframe" class="options" src="/assets/clock.gif" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a timeframe" />
-		<% if !(request.user_agent.include? "iphone" || "ipad") %>
+		<!--<% if !(request.user_agent.include? "iphone" || "ipad") %>
 			<img id="image" class="options" src="/assets/picture-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add an image" />
-		<% end %>
+		<% end %>-->
 		<img id="location" class="options" src="/assets/location-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a location"/>
-		<img id="link" class="options" src="/assets/link-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a link" />
+		<!--<img id="link" class="options" src="/assets/link-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add a link" />
 		<img id="email" class="options" src="/assets/email-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add an email" />
-		<img id="text" class="options" src="/assets/text-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add text" />
+		<img id="text" class="options" src="/assets/text-on.png" style="max-width: 40px; margin: 0 40px; padding: 10px;" title="Add text" />-->
 	</div><!-- options -->
 	<div id="options-dialog" style="padding: 20px;">
 		<div id="timeframe_select" class="field" style="display: none;">
@@ -76,7 +76,10 @@
 						<td><%= thought.id %></td>
 						<td><%= thought.idea %></td>
 						<td><%= thought.tag %></td>
-						<td><a onclick="$('#thought_location_content').val('<%= thought.location_content %>')">Use it</a></td>
+						<td><a onclick="
+                                                              $('#thought_location_content').val('<%= thought.location_content %>');
+								$('#location_selected').slideDown();
+								">Use it</a></td>
 					</tr>
 					<% end %>
 				</table>
@@ -124,8 +127,8 @@
 	<%= f.hidden_field :tag %>
 <% end %>
 
-<canvas id="drawing" width="500" height="500" style="border: 1px solid black; "></canvas>
-<div id="drawing_link">Click when finished!</div>
+<!--<canvas id="drawing" width="500" height="500" style="border: 1px solid black; "></canvas>
+<div id="drawing_link">Click when finished!</div>-->
 </section>
 
 <script type"text/javascript">
@@ -248,29 +251,36 @@
 	    }
 	});
 
-	/*$("#thought_timeframe").change(function(){
+	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected") != " "){
 			$("#timeframe_selected").slideDown();
-			$("#timeframe_heading").append('<img src="/assets/check_green.gif" >');
+			//$("#timeframe_heading").append('<img src="/assets/check_green.gif" >');
 		}
 	});
+	/*
 	$("#locate_current").click(function(){
 		$("#location_selected").slideDown();
 		$("#location_heading").append('<img src="/assets/check_green.gif" >');
 	});*/
 
 	$("#new_thought").submit(function(){
-		var str = $("#thought_idea").val();
-		str = str.replace("#"+tag,"");
-		$("#thought_idea").val(str);
-
-		if ($("#thought_location_content").val() != ""){
-			$("#thought_note_location").val("1");
+		if ($("#thought_idea").val() == ""){
+			alert("Please type in an idea!");
+			return false;
 		}
-		return true;
+		else {
+			var str = $("#thought_idea").val();
+			str = str.replace("#"+tag,"");
+			$("#thought_idea").val(str);
+
+			if ($("#thought_location_content").val() != ""){
+				$("#thought_note_location").val("1");
+			}
+			return true;
+		}
 	});
 
-	$(document).ready(function(){
+	/*$(document).ready(function(){
 		var el = document.getElementById("drawing");
 		el.addEventListener("touchstart", handleStart, false);
 		el.addEventListener("touchend", handleEnd, false);
@@ -367,6 +377,6 @@
 
 		    	ongoingTouches.splice(idx, 1, touches[i]);  // swap in the new touch record
 		}
-	}
+	}*/
 
 </script>

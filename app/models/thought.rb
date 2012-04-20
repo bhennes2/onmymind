@@ -8,16 +8,30 @@ class Thought < ActiveRecord::Base
 	# Allow thoughts to be commented on
 	acts_as_commentable
 
-	def self.search(search,type)
-  		if type == "Idea"
-			where('idea LIKE ?', "%#{search}%")
-		elsif type == "Tag"
-			where('tag LIKE ?', "%#{search}%")
-		elsif type == "Date"
-			where('timeframe_date LIKE ?', "%#{search}%")
-		else
-			scoped
+	def self.search(search)
+
+		results = Array.new
+
+		ideas = self.where('idea LIKE ?', "%#{search}%")
+		tags = self.where('tag LIKE ?', "%#{search}%")
+		dates = self.where('timeframe_date LIKE ?', "%#{search}%")
+
+		if ideas != []
+			ideas.each do |idea|
+				results << idea
+			end
 		end
+		if tags != []
+			tags.each do |tag|
+				results << tag
+			end
+		end
+		if dates != []
+			dates.each do |date|
+				results << date
+			end
+		end
+		return results
 	end
 
 	default_scope :order => 'thoughts.created_at DESC'
