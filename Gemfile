@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby 1.9.3
+ruby '2.1.5'
 
 gem 'rails', '3.2.11'
 gem 'bcrypt-ruby', '3.0.1'
@@ -48,9 +48,12 @@ gem 'delayed_job_active_record'
 
 # Use unicorn as the app server
 # gem 'unicorn'
+gem 'puma'
 
 # Deploy with Capistrano
 # gem 'capistrano'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+
