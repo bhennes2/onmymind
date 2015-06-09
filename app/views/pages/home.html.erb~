@@ -1,41 +1,34 @@
 <% if signed_in? %>
-	<section id="tweet_form" class="well span10 form-inline">
-		<%= render :partial => "thought_tweet" %>
-	</section>
+	<!--<section id="tweet_form" class="well span10 form-inline">
+		<a href="/thoughts/new"><img src="http://cdn1.iconfinder.com/data/icons/prettyoffice/256/edit.png" /></a>
+		<span>- OR -</span>
+		<img id="search" src="http://cdn1.iconfinder.com/data/icons/musthave/256/Search.png" />
+		<% render :partial => "thought_tweet" %>
+	</section>-->
 
-	<section id="notice_area" class="well span10">
-		<h3>Quick thoughts:
-			<% @thoughts_recent.each do |thought| %>
-				<a id="<%= thought.id %>" class="btn btn-primary quickthought" data-toggle="modal" href="#myModal" ><%= thought.tag %></a>
-			<% end %>
-		</h3>
-	</section>
-
-	<section class="well form-search form-inline span10">
-
-		<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
-			<h2><%= @title2 %></h2>
-			<%= text_field_tag :search, params[:search], :disabled => true, :autocomplete => "off", :class => "input-medium search-query" %>
-		        <%= submit_tag "Search", :name => nil, :disabled => true, :id => "submit" %>
-			<%= radio_button_tag 'type', "Idea" %><label class="radio">Idea</label>
-			<%= radio_button_tag 'type', "Tag" %><label class="radio">Tag</label>
-			<%= radio_button_tag 'type', "Date" %><label class="radio">Date</label>
-		<% end %>
-		<div id="search-results" style="display: none; ">
-			<%= render :partial => 'search' %>
-		</div>
-	</section>
-	<section class="span10 well form-inline">
-		<h3><%= @title3 %></h3>
-		<p><span class="span1">Here </span><span class="span6" id="slider"></span><span>&nbsp;&nbsp;&nbsp; Infinity and beyond</span></p>
+	<section class="span10 form-inline">
+		<!--<p><span class="span1">Here </span><span class="span6" id="slider"></span><span>&nbsp;&nbsp;&nbsp; Infinity and beyond</span></p>-->
 		<p>
 			<span id="tags_range"></span>
 			<span id="tags_nearby"></span>
 		</p>
 	</section>
 
-	<!-- Render modal -->
-	<%= render :partial => 'thought_modal' %>
+
+	<section class="well form-search form-inline span10">
+		<h1>Start searching your thoughts.  Type below...</h1><br />
+		<%= form_tag root_url, :method => 'get', :html => { :id => "search_form" } do %>
+			<%= text_field_tag :search, params[:search], :autocomplete => "off", :class => "input-xxlarge search-query", :placeholder => "Easily find your thoughts.." %>
+		        <% submit_tag "Search", :name => nil, :id => "submit", :class => "btn-primary" %>
+			<% radio_button_tag 'type', "Idea" %>
+			<% radio_button_tag 'type', "Tag" %>
+			<% radio_button_tag 'type', "Date" %>
+		<% end %>
+		<div id="search-results" style="display: none; ">
+			<%= render :partial => 'search' %>
+		</div>
+	</section>
+
 
 <% else %>
 	<!-- Main hero unit for a primary marketing message or call to action -->
@@ -49,7 +42,7 @@
 
 <script>
 
-	$(function() {
+	/*$(function() {
 			$("#slider").slider({
 				min: 1,
 				max: 100,
@@ -59,20 +52,20 @@
 
 				},
 				slide: function(event, ui){
-					var val = ui.value/2;
+					var val = ui.value/5;
 					$('#tags_nearby').html('');
 					update_nearby(val);
 				}
 
 			});
-		});
+		});*/
 
 	/*$('input[name=distance]:radio').click(function(){
 		$('#tags_nearby').html('');
 		update_nearby($('input[name=distance]:radio:checked').val());
 	});*/
 
-	$('input[name=type]:radio').change(function(){
+	/*$('input[name=type]:radio').change(function(){
 		$('#search').attr('disabled', false);
 		$('#submit').attr('disabled', false);
 		if ($('input:radio:checked').val() == "Date"){
@@ -85,18 +78,24 @@
 		else{
 			$('#search').datepicker("destroy");
 		}
-	});
+	});*/
 
 	$('#search').keyup(function(){
-		$('#search-results').show();
-		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		if( $(this).val() != ""){
+			$('#search-results').show();
+		}
+		else if ( $(this).val() == ""){
+			$('#search-results').slideUp();
+		}
+		$.get($('#search_form').attr('action'), { search: $('#search').val() }, null, 'script');
 		return false;
 	});
-	$('#search').change(function(){
+	/*$('#search').change(function(){
+		console.log("hello");
 		$('#search-results').show();
-		$.get($('#search_form').attr('action'), { search: $('#search').val(), type: $('input:radio:checked').val() }, null, 'script');
+		$.get($('#search_form').attr('action'), { search: $('#search').val() }, null, 'script');
 		return false;
-	});
+	});*/
 
 	var radius = 0.1;
 
@@ -117,7 +116,7 @@
 		// Current location
 		lat1 = position.coords.latitude * Math.PI/180;
 		lon1 = position.coords.longitude * Math.PI/180;
-		$("#tags_range").html("Within: "+radius+" mile(s) -->");
+		$("#tags_range").html("Tags nearby: ");
 		for (var i=0; i < tag_coords.length; i++){
 
 			// Thought location

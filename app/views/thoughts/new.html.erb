@@ -1,4 +1,13 @@
-<h1><%= @h1 %></h1><br />
+<section id="notice_area" class="well">
+	<h3>Quick thoughts:
+		<% @thoughts_recent.each do |thought| %>
+			<% if thought.tag != "" %>
+				<a id="<%= thought.id %>" class="btn btn-primary quickthought" data-toggle="modal" href="#myModal" ><%= thought.tag %></a>
+			<% end %>
+		<% end %>
+	</h3>
+</section>
+
 <!--<p>Top tags:
 <% @top_tags.each do |thought| %>
 	<a class="top_tag" href="/quicktag?id=<%= thought.id %>"><%= thought.tag %></a>
@@ -6,6 +15,8 @@
 </p>-->
 <%= render :partial => 'form' %>
 
+<!-- Render modal -->
+<%= render :partial => 'thought_modal' %>
 <script>
 	$(function(){
 		var max_length = 140;
@@ -111,6 +122,7 @@
 			function showMap(position) {
     	  		// Show a map centered at (position.coords.latitude, position.coords.longitude).
 				$("#thought_location_content").val(position.coords.latitude+","+position.coords.longitude).attr('rows', 1);
+				$("#location_selected").slideDown();
 			}
 
 			// One-shot position request.
@@ -121,7 +133,6 @@
 			$("#map_area").hide();
 			$("#locations").show();
 	});
-
 
 	/*$("#thought_note_email").change(function(){
 		var checked = $(this).is(':checked');
@@ -148,19 +159,19 @@
 
 	$("#thought_timeframe").change(function(){
 		if ($("#thought_timeframe option:selected").val() == "By Date")
-		{	$("#reminder_area").show();
+		{	//$("#reminder_area").show();
 			$("#frequency_date").hide();
 			$("#frequency").hide();
 			$("#thought_timeframe_date").show().datepicker({dateFormat: 'yy-mm-dd'}).focus();
 		}
 		else if ($("#thought_timeframe option:selected").val() == "Every"){
-			$("#reminder_area").show();
+			//$("#reminder_area").show();
 			$("#frequency").show().focus();
 			$("#frequency_date").show().datepicker({dateFormat: 'yy-mm-dd'});
 			$("#thought_timeframe_date").hide();
 		}
 		else if ($("#thought_timeframe option:selected").val() == "Soon" || $("#thought_timeframe option:selected").val() == "Someday"){
-			$("#reminder_area").hide();
+			//$("#reminder_area").hide();
 			$("#thought_timeframe_date").hide();
 			$("#frequency_date").hide();
 			$("#frequency").hide();
@@ -320,7 +331,7 @@
 		  var coordinates = String(place.geometry.location).replace("(","");
 		  coordinates = coordinates.replace(")","");
 
-		  infowindow.setContent('<div><strong><a onclick="$(\'#thought_location_content\').val(\''+coordinates+'\')">' + place.name + '</a></strong><br>' + address);
+		  infowindow.setContent('<div><strong><a id="location_search_select" onclick="$(\'#thought_location_content\').val(\''+coordinates+'\')">' + place.name + '</a></strong><br>' + address);
 		  infowindow.open(map, marker);
 		});
 
